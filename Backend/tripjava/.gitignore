@@ -160,4 +160,5 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
+/src/main/resources/application-secret.properties
 # End of https://www.toptal.com/developers/gitignore/api/maven,intellij+all,java,windows
