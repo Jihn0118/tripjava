@@ -12,8 +12,12 @@ import java.util.List;
 @NoArgsConstructor
 @ToString
 public class Day {
+    //
+    private Long dayId;
+    // 외래키
+    private Long travelId;
     // 여행 날짜
-    private int day;
+    private int dayNumber;
     // 여행 날짜별 상세 정보를 담는 list
     private List<TravelPlanDetail> details;
 
