@@ -4,5 +4,29 @@
 
 <mapper namespace="site.tripjava.tripjava.tripPlan.model.mapper.TripPlanMapper">
 
+    <insert id="registerTripPlan" parameterType="travelPlan">
+        insert into TravelPlan ( user_id, start_date, end_date, travel_name )
+        values(#{userId},#{startDate},#{endDate},#{travelName})
+        <selectKey resultType="long" keyProperty="travelId" order="AFTER">
+            -- list_insert_id() => 테이블의 마지막 auto_increment 값을 리턴하다
+            select last_insert_id()
+        </selectKey>
+    </insert>
+
+    <insert id="registerDayPlan" parameterType="day">
+        insert into Day (day_number, travel_id)
+        values(#{dayNumber},#{travelId})
+        <selectKey resultType="long" keyProperty="dayId" order="AFTER">
+            select last_insert_id()
+        </selectKey>
+    </insert>
+
+    <insert id="registerTripDayPlanDetail" parameterType="day">
+        insert into TravelPlanDetail (sequence , content_id, day_id)
+        values
+        <foreach collection="details" item="detail" separator=" , ">
+            (#{detail.sequence},#{detail.contentId},#{dayId})
+        </foreach>
+    </insert>
 
 </mapper>
