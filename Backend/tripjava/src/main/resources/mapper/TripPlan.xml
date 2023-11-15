@@ -4,6 +4,30 @@
 
 <mapper namespace="site.tripjava.tripjava.tripPlan.model.mapper.TripPlanMapper">
 
+    <resultMap type="TravelPlan" id="tripPlan">
+        <result column="travel_id" property="travelId"/>
+        <result column="user_id" property="userId"/>
+        <result column="start_date" property="startDate"/>
+        <result column="end_date" property="endDate"/>
+        <result column="travel_name" property="travelName"/>
+    </resultMap>
+
+    <resultMap type="day" id="day">
+        <result column="day_id" property="dayId"/>
+        <result column="day_number" property="dayNumber"/>
+        <result column="travel_id" property="travelId"/>
+    </resultMap>
+
+    <resultMap type="day" id="dayDetailPlan" extends="day">
+        <collection property="details" column="day_id" javaType="list" ofType="travelPlanDetail"
+                    select="dayPlanDetail"/>
+    </resultMap>
+
+    <resultMap id="dayPlanDetailMap" type="TravelPlanDetail">
+        <result column="sequence" property="sequence"/>
+        <result column="content_id" property="contentId"/>
+    </resultMap>
+
     <insert id="registerTripPlan" parameterType="travelPlan">
         insert into TravelPlan ( user_id, start_date, end_date, travel_name )
         values(#{userId},#{startDate},#{endDate},#{travelName})
@@ -28,5 +52,23 @@
             (#{detail.sequence},#{detail.contentId},#{dayId})
         </foreach>
     </insert>
+
+    <select id="getTravelPlanList" parameterType="long" resultMap="tripPlan">
+        select travel_id, user_id, start_date, end_date, travel_name
+        from TravelPlan
+        where user_id = #{userId}
+    </select>
+
+    <select id="getTravelDetailPlan" parameterType="long" resultMap="dayDetailPlan">
+        select day_id, day_number, travel_id
+        from Day
+        where travel_id = #{travel_id}
+    </select>
+
+    <select id="dayPlanDetail" resultMap="dayPlanDetailMap">
+        select sequence, content_id
+        from TravelPlanDetail
+        where day_id = #{day_id}
+    </select>
 
 </mapper>
