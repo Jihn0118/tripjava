@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="site.tripjava.tripjava.member.model.mapper.MemberMapper">
+    <resultMap type="memberDto" id="member">
+        <result column="id" property="id"/>
+        <result column="password" property="password"/>
+        <result column="user_name" property="userName"/>
+        <result column="birthday" property="birthday"/>
+        <result column="gender" property="gender"/>
+        <result column="login_type" property="loginType"/>
+        <result column="member_type" property="memberType"/>
+        <result column="role" property="role"/>
+    </resultMap>
+
+</mapper>
