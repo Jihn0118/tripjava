@@ -71,4 +71,10 @@
         where day_id = #{day_id}
     </select>
 
+    <delete id="deleteTripPlan" parameterType="long">
+        delete
+        from TravelPlan
+        where travel_id = #{travelId}
+    </delete>
+
 </mapper>

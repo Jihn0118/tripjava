@@ -45,4 +45,9 @@ public class TripPlanServiceImpl implements TripPlanService {
     public List<Day> getTravelDetailPlan(Long travelId) throws SQLException {
         return tripPlanMapper.getTravelDetailPlan(travelId);
     }
+
+    @Override
+    public void deleteTripPlan(Long travelId) throws SQLException {
+        tripPlanMapper.deleteTripPlan(travelId);
+    }
 }
