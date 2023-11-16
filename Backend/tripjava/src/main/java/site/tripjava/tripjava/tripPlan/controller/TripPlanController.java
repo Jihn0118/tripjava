@@ -39,10 +39,17 @@ public class TripPlanController {
         return new ResponseEntity<List<Day>>(tripPlanService.getTravelDetailPlan(travelId), HttpStatus.OK);
     }
 
-    @DeleteMapping("{travelId}")
+    @DeleteMapping("/{travelId}")
     public ResponseEntity<Void> deleteTripPlan(@PathVariable Long travelId) throws SQLException{
         System.out.println(travelId);
         tripPlanService.deleteTripPlan(travelId);
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping
+    public ResponseEntity<Void> modifyTripPlan(@RequestBody TravelPlan travelPlan) throws SQLException{
+        System.out.println(travelPlan);
+        tripPlanService.modifyTripPlan(travelPlan);
         return ResponseEntity.ok().build();
     }
 }

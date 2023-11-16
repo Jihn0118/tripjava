@@ -15,4 +15,6 @@ public interface TripPlanService {
     List<Day> getTravelDetailPlan(Long travelId) throws SQLException;
 
     void deleteTripPlan(Long travelId) throws SQLException;
+
+    void modifyTripPlan(TravelPlan travelPlan) throws  SQLException;
 }
