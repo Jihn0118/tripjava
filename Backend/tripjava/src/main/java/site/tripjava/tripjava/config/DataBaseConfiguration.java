@@ -18,7 +18,7 @@ import javax.sql.DataSource;
 @Configuration
 @PropertySource("classpath:/application.properties")
 @RequiredArgsConstructor
-//@MapperScan
+@MapperScan(basePackages = {"site.tripjava.tripjava.*.model.mapper"})
 public class DataBaseConfiguration {
 
     private final ApplicationContext applicationContext;
@@ -38,8 +38,8 @@ public class DataBaseConfiguration {
     public SqlSessionFactory sqlSessionFactory(DataSource dataSource) throws Exception {
         SqlSessionFactoryBean session = new SqlSessionFactoryBean();
         session.setDataSource(dataSource);
-//        session.setMapperLocations(applicationContext.getResources(""));
-//        session.setTypeAliasesPackage("");
+        session.setMapperLocations(applicationContext.getResources("classpath:mapper/**/*.xml"));
+        session.setTypeAliasesPackage("site.tripjava.tripjava.*.model");
         return session.getObject();
     }
 
