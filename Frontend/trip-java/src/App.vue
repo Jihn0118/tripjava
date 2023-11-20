@@ -37,6 +37,7 @@ const footerStyle = {
       <a-layout-footer :style="footerStyle">Footer</a-layout-footer>
     </a-layout>
   </a-space>
+
 </template>
 
 <style scoped>
