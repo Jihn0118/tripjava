@@ -1,7 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
+
 import LoginRedirectView from '../views/LoginRedirectView.vue'
 import LoginView from '../views/LoginView.vue'
+import Planview from "@/views/PlanView.vue";
+import InformationView from "@/views/InformationView.vue";
 import { storeToRefs } from "pinia";
 import { useMemberStore } from "@/stores/member"
 
@@ -22,6 +25,7 @@ const onlyAuthUser = async (to, from, next) => {
   }
 };
 
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -39,6 +43,16 @@ const router = createRouter({
       path: '/member/login',
       name: 'login',
       component: LoginView
+    },
+    {
+      path: '/plan',
+      name: 'plan',
+      component: Planview
+    },
+    {
+      path: '/information',
+      name: 'information',
+      component: InformationView
     },
     {
       path: "/user",

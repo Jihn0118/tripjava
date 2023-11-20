@@ -17,4 +17,6 @@ public interface TripPlanMapper {
     List<TravelPlan> getTravelPlanList(Long id) throws SQLException;
 
     List<Day> getTravelDetailPlan(Long travelId) throws SQLException;
+
+    void deleteTripPlan(Long travelId) throws SQLException;
 }

@@ -7,6 +7,8 @@ import 'ant-design-vue/dist/reset.css'
 
 import App from './App.vue'
 import router from './router'
+import Antd from 'ant-design-vue';
+import 'ant-design-vue/dist/reset.css';
 
 const app = createApp(App)
 const pinia = createPinia();
@@ -23,3 +25,7 @@ router.isReady().then(() => {
 });
   
 
+<<<<<<< HEAD
+=======
+app.use(Antd).mount('#app')
+>>>>>>> 9264976cafb90eb78e22c4da7936f631d8700128
