@@ -49,6 +49,9 @@ const modifyMe = async () => {
       ><img src="@/assets/logo.png" alt="프로필 이미지 없음"
     /></a-descriptions-item>
   </a-descriptions>
+  <router-link :to="{ name: 'user-plan' }">
+    <font-awesome-icon icon="route" style="width: 50px; height: 50px" /> 나의 여행 계획
+  </router-link>
   <a-popconfirm
     title="정보 수정 페이지로 이동하시겠습니까?"
     ok-text="이동"
@@ -67,7 +70,6 @@ const modifyMe = async () => {
     <template #icon><question-circle-outlined style="color: red" /></template>
     <a-button type="primary" danger class="btn">회원탈퇴</a-button>
   </a-popconfirm>
-  <div><font-awesome-icon icon="route" style="width: 50px; height: 50px" /> 나의 여행 계획</div>
 </template>
 
 <style scoped>
