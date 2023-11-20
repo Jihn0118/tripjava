@@ -55,6 +55,11 @@ const router = createRouter({
       component: InformationView
     },
     {
+      path: '/information/:infoId',
+      name: 'information-detail',
+      component: ()=>import("@/components/tripInfo/InfoDetail.vue")
+    },
+    {
       path: "/user",
       name: "user",
       // component: () => import("@/views/TheUserView.vue"),

@@ -11,7 +11,13 @@
         <result column="first_image" property="image"></result>
         <result column="latitude" property="latitude"></result>
         <result column="longitude" property="longitude"></result>
-        <result column="heart" property="heart"></result>
+        <result column="love" property="love"></result>
+        <result column="overview" property="description"></result>
+    </resultMap>
+
+    <resultMap id="sidoInfo" type="sido">
+        <result column="sido_code" property="sidoCode"></result>
+        <result column="sido_name" property="sidoName"></result>
     </resultMap>
 <!--
 12 -> 관광지
@@ -25,7 +31,7 @@
 
 -->
     <select id="searchAttraction" parameterType="searchCondition" resultMap="attractionInfo">
-        select content_id, title, addr1, first_image, latitude, longitude, heart
+        select content_id, title, addr1, first_image, latitude, longitude, love
         from attraction_info
         <where>
             <if test="contentType != null and contentType != ''">
@@ -38,12 +44,19 @@
                 AND sido_Code = #{sidoCode}
             </if>
         </where>
-        order by heart desc
+        order by love desc
+        limit 10
     </select>
 
-    <select id="getSidoName" resultType="string">
-        select sido_name
+    <select id="getSidoInfo"  resultMap="sidoInfo">
+        select sido_name, sido_code
         from sido
+    </select>
+
+    <select id="getDetailInfo" parameterType="int" resultMap="attractionInfo">
+        select i.content_id, i.title, i.addr1, i.first_image, i.latitude, i.longitude, i.love, d.overview
+        from attraction_info i, attraction_description d
+        where i.content_id = d.content_id and i.content_id = #{content_id};
     </select>
 
 </mapper>

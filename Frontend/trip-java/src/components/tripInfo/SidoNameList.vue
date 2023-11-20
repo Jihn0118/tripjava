@@ -6,23 +6,32 @@ import {Swiper, SwiperSlide} from 'swiper/vue';
 import 'swiper/css';
 import 'swiper/css/navigation';
 
+const emit = defineEmits(['sidoClickEvent'])
 const modules = [Pagination, Navigation, Autoplay];
 
 
-const sidoNames = ref([]);
+
+const sidoList = ref([]);
+const selectSido = ref('');
 
 const getSidoList = () => {
   console.log("들어왔따")
   listSidoName(
       ({data}) => {
         console.log("123123");
-        sidoNames.value = data;
+        sidoList.value = data;
       },
       (error) => {
         console.log(error);
       }
   )
 }
+
+const click = (sido) =>{
+  selectSido.value = sido;
+  emit('sidoClickEvent',selectSido.value);
+}
+
 
 onMounted(() => {
   getSidoList();
@@ -37,7 +46,9 @@ onMounted(() => {
       :pagination="{ clickable: true }"
       :navigation="true"
   >
-    <swiper-slide v-for="sidoName in sidoNames">{{ sidoName }}</swiper-slide>
+    <swiper-slide v-for="sido in sidoList">
+      <button @click="click(sido.sidoCode)">{{sido.sidoName}}</button>
+    </swiper-slide>
   </swiper>
 </template>
 

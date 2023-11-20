@@ -1,4 +1,4 @@
-<script setup>
+npm i<script setup>
 
 import PlanMenu from "@/components/plan/PlanMenu.vue";
 

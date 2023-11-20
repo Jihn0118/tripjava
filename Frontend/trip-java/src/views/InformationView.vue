@@ -2,8 +2,13 @@
 
 import {ref, onMounted} from "vue";
 import SidoNameList from "@/components/tripInfo/SidoNameList.vue";
+import InfoList from "@/components/tripInfo/InfoList.vue";
 
 const bgImage = ref('');
+const selectedSido = ref(1);
+const sidoCilckEvent = (selectItem) =>{
+    selectedSido.value = selectItem;
+}
 
 onMounted(() => {
   const randomNumber = Math.floor(Math.random() * 4) + 1; // 1~4 사이의 랜덤 숫자 생성
@@ -24,7 +29,8 @@ onMounted(() => {
     </div>
   </div>
 
-  <SidoNameList></SidoNameList>
+  <SidoNameList @sido-click-event="sidoCilckEvent"></SidoNameList>
+  <InfoList :selectedSido="selectedSido"></InfoList>
 
   <div>
     <h3>인기 여행지</h3>
