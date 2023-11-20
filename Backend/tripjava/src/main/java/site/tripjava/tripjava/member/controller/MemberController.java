@@ -15,29 +15,34 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/user")
-@RequiredArgsConstructor
 @Slf4j
 public class MemberController {
     private MemberService memberService;
     private JWTUtil jwtUtil;
 
+    public MemberController(MemberService memberService, JWTUtil jwtUtil){
+        super();
+        this.memberService = memberService;
+        this.jwtUtil = jwtUtil;
+    }
+
     @PostMapping("/login")
     public ResponseEntity<Map<String, Object>> login(
-            @RequestBody(required = true) MemberDto memberDto) {
-        log.debug("login user : {}", memberDto);
+            @RequestBody MemberDto memberDto) {
+        System.out.println("로그인 들어왔다!!!");
         Map<String, Object> resultMap = new HashMap<String, Object>();
         HttpStatus status = HttpStatus.ACCEPTED;
         try {
             MemberDto loginUser = memberService.login(memberDto);
+
             if(loginUser != null) {
                 String accessToken = jwtUtil.createAccessToken(loginUser.getId());
                 String refreshToken = jwtUtil.createRefreshToken(loginUser.getId());
-                log.debug("access token : {}", accessToken);
-                log.debug("refresh token : {}", refreshToken);
 
 //				발급받은 refresh token을 DB에 저장.
                 memberService.saveRefreshToken(loginUser.getId(), refreshToken);
 
+                System.out.println("야호" + memberService.getRefreshToken(loginUser.getId()).toString());
 //				JSON으로 token 전달.
                 resultMap.put("access-token", accessToken);
                 resultMap.put("refresh-token", refreshToken);
@@ -87,7 +92,7 @@ public class MemberController {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         try {
-            memberService.deleRefreshToken(userId);
+            memberService.deleteRefreshToken(userId);
             status = HttpStatus.OK;
         } catch (Exception e) {
             log.error("로그아웃 실패 : {}", e);
@@ -171,4 +176,22 @@ public class MemberController {
         return new ResponseEntity<Map<String, Object>>(resultMap, status);
     }
 
+    @GetMapping("/checkid/{id}")
+    public ResponseEntity<?> checkId(@PathVariable String id){
+        System.out.println("아이디체크 들어옴");
+        Map<String, Object> resultMap = new HashMap<>();
+        HttpStatus status = HttpStatus.ACCEPTED;
+
+        try {
+            int result = memberService.checkId(id);
+            status = HttpStatus.OK;
+            resultMap.put("result", result);
+        } catch (Exception e) {
+            System.out.println("아이디 체크 실패");
+            log.error("아이디 체크 실패 : {}", e);
+            resultMap.put("message", e.getMessage());
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+        return new ResponseEntity<Map<String, Object>>(resultMap, status);
+    }
 }
