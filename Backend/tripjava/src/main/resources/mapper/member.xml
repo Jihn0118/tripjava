@@ -17,31 +17,31 @@
     <select id="login" parameterType="map" resultMap="member">
         select id, user_name, token
         from members
-        where id = #{userId} and password = #{userPwd}
+        where id = #{id} and password = #{password}
     </select>
 
     <select id="userInfo" parameterType="string" resultMap="member">
-        select id, password, user_name, birthday, gender, login_type, member_type, role
+        select id, password, user_name, birthday, gender, login_type, member_type, role, token
         from members
-        where id = #{userId}
+        where id = #{id}
     </select>
 
     <update id="saveRefreshToken" parameterType="map">
         update members
         set token = #{token}
-        where id = #{userId}
+        where id = #{id}
     </update>
 
     <select id="getRefreshToken" parameterType="string" resultType="string">
         select token
         from members
-        where id = #{userId}
+        where id = #{id}
     </select>
 
     <update id="deleteRefreshToken" parameterType="map">
         update members
         set token = #{token, jdbcType=VARCHAR}
-        where id = #{userId}
+        where id = #{id}
     </update>
 
     <select id="findByEmail" parameterType="string" resultMap="member">
@@ -56,7 +56,7 @@
         where user_name = #{userName}
     </select>
 
-    <insert id="join" parameterType="member">
+    <insert id="join" parameterType="memberDto">
         insert into members (id, password, user_name, birthday, gender, image)
         values (#{id}, #{password}, #{userName}, #{birthday}, #{gender}, #{image})
     </insert>
@@ -77,5 +77,11 @@
         delete from members
         where id = #{id}
     </delete>
+
+    <select id="checkId" parameterType="String">
+        select count(*)
+        from members
+        where id = #{id}
+    </select>
 
 </mapper>

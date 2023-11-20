@@ -9,10 +9,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
-@RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService{
     private MemberMapper memberMapper;
 
+    MemberServiceImpl(MemberMapper memberMapper){
+        super();
+        this.memberMapper = memberMapper;
+    }
     @Override
     public MemberDto login(MemberDto memberDto) throws Exception {
         return memberMapper.login(memberDto);
@@ -24,10 +27,10 @@ public class MemberServiceImpl implements MemberService{
     }
 
     @Override
-    public void saveRefreshToken(String userId, String refreshToken) throws Exception {
+    public void saveRefreshToken(String id, String token) throws Exception {
         Map<String, String> map = new HashMap<>();
-        map.put("userId", userId);
-        map.put("token", refreshToken);
+        map.put("id", id);
+        map.put("token", token);
         memberMapper.saveRefreshToken(map);
     }
 
@@ -37,9 +40,9 @@ public class MemberServiceImpl implements MemberService{
     }
 
     @Override
-    public void deleRefreshToken(String userId) throws Exception {
+    public void deleteRefreshToken(String userId) throws Exception {
         Map<String, String> map = new HashMap<>();
-        map.put("userId", userId);
+        map.put("id", userId);
         map.put("token", null);
         memberMapper.deleteRefreshToken(map);
     }
@@ -57,6 +60,11 @@ public class MemberServiceImpl implements MemberService{
     @Override
     public void updateMember(MemberDto memberDto) throws Exception {
         memberMapper.updateMember(memberDto);
+    }
+
+    @Override
+    public int checkId(String id) throws Exception {
+        return memberMapper.checkId(id);
     }
 
 
