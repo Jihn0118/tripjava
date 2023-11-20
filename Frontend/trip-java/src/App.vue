@@ -30,9 +30,7 @@ const footerStyle = {
 <template>
   <a-space direction="vertical" :style="{ width: '100%' }" :size="[0, 48]">
     <a-layout>
-      <a-layout-header :style="headerStyle">
       <the-heading-navbar></the-heading-navbar>
-      </a-layout-header>
       <a-layout-content :style="contentStyle">
         <router-view></router-view>
       </a-layout-content>
