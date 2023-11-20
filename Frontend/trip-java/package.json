@@ -10,12 +10,9 @@
   },
   "dependencies": {
     "ant-design-vue": "^4.0.7",
-<<<<<<< HEAD
     "axios": "^1.6.2",
     "cors": "^2.8.5",
     "jwt-decode": "^4.0.0",
-=======
->>>>>>> 9264976cafb90eb78e22c4da7936f631d8700128
     "pinia": "^2.1.7",
     "pinia-persistedstate": "^0.1.2",
     "pinia-plugin-persistedstate": "^3.2.0",
