@@ -1,7 +1,6 @@
 package site.tripjava.tripjava.member.model;
 
 import lombok.*;
-import org.springframework.security.core.GrantedAuthority;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -19,13 +18,14 @@ public class MemberDto {
     private String userName;
     private LocalDate birthday;
     private String gender;
+    private String image;
     private String loginType;
     private String memberType;
     private String role;
-    private String refreshToken;
+    private String token;
 
-    public List<? extends GrantedAuthority> getGrantedAuthorities(){
-        List<GrantedAuthority> getGrantedAuthorities = new ArrayList<>();
-        return getGrantedAuthorities;
-    }
+//    public List<? extends GrantedAuthority> getGrantedAuthorities(){
+//        List<GrantedAuthority> getGrantedAuthorities = new ArrayList<>();
+//        return getGrantedAuthorities;
+//    }
 }
