@@ -8,5 +8,5 @@ import java.util.List;
 
 public interface AttractionMapper {
     List<AttractionInfo> searchAttraction(SearchCondition searchCondition) throws SQLException;
-
+    String [] getSidoName() throws SQLException;
 }

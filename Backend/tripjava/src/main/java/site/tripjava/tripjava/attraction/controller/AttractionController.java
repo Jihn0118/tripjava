@@ -23,6 +23,12 @@ public class AttractionController {
     @GetMapping
     public ResponseEntity<List<AttractionInfo>> searchAttraction(SearchCondition searchCondition) throws SQLException {
         System.out.println(searchCondition);
-        return new ResponseEntity<List<AttractionInfo>>(attractionService.searchAttraction(searchCondition),HttpStatus.OK);
+        return new ResponseEntity<List<AttractionInfo>>(attractionService.searchAttraction(searchCondition), HttpStatus.OK);
+    }
+
+    @GetMapping("/sidoName")
+    public ResponseEntity<String[]> getSidoName() throws SQLException {
+        System.out.println("1111");
+        return new ResponseEntity<String[]>(attractionService.getSidoName(), HttpStatus.OK);
     }
 }

@@ -9,5 +9,5 @@ import java.util.List;
 public interface AttractionService {
 
     List<AttractionInfo> searchAttraction (SearchCondition searchCondition) throws SQLException;
-
+    String [] getSidoName() throws SQLException;
 }

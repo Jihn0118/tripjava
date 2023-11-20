@@ -41,6 +41,11 @@
         order by heart desc
     </select>
 
+    <select id="getSidoName" resultType="string">
+        select sido_name
+        from sido
+    </select>
+
 </mapper>
 
 

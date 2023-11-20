@@ -18,4 +18,9 @@ public class AttractionServiceImpl implements AttractionService {
     public List<AttractionInfo> searchAttraction(SearchCondition searchCondition) throws SQLException {
         return attractionMapper.searchAttraction(searchCondition);
     }
+
+    @Override
+    public String[] getSidoName() throws SQLException {
+        return attractionMapper.getSidoName();
+    }
 }
