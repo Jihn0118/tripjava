@@ -3,17 +3,34 @@ import { defineStore } from "pinia";
 
 export const useMenuStore = defineStore("menuStore", () => {
   const menuList = ref([
-    { name: "회원가입", show: true, routeName: "user-join" },
-    { name: "로그인", show: true, routeName: "user-login" },
-    { name: "내정보", show: false, routeName: "user-mypage" },
-    { name: "로그아웃", show: false, routeName: "user-logout" },
+    { name: "home", show: true, routeName: "home", key: "2" },
+    { name: "plan", show: false, routeName: "plan", key: "1" },
+    { name: "information", show: false, routeName: "information", key: "3" },
+    { name: "mypage", show: false, routeName: "user-mypage", key: "4" },
+  ]);
+
+  const menuList2 = ref([
+    { name: "logout", show: true, routeName: "user-logout" },
+    { name: "login", show: true, routeName: "user-login" },
   ]);
 
   const changeMenuState = () => {
-    menuList.value = menuList.value.map((item) => ({ ...item, show: !item.show }));
+    console.log("changeMenuState되니?");
+    menuList.value = menuList.value.map((item) => ({
+      ...item,
+      show: !item.show,
+    }));
+    menuList2.value = menuList2.value.map((item) => ({
+      ...item,
+      show: !item.show,
+    }));
+    menuList[0].value.show = true;
+    console.log("메뉴1: " + menuList.value);
+    console.log("메뉴2 :" + menuList2);
   };
   return {
     menuList,
+    menuList2,
     changeMenuState,
   };
 });

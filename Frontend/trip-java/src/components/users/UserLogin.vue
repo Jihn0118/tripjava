@@ -19,11 +19,12 @@ const loginUser = ref({
 });
 
 const login = async () => {
-  console.log(loginUser.value);
+  console.log("UserLogin.vue 로그인!!!!");
   await userLogin(loginUser.value);
   let token = sessionStorage.getItem("accessToken");
   if (isLogin) {
     getUserInfo(token);
+    console.log("changeMenuState() 제발 호출!!!");
     changeMenuState();
   }
   router.push("/");
@@ -53,7 +54,12 @@ const login = async () => {
     </a-form-item> -->
 
     <a-form-item :wrapper-col="{ offset: 8, span: 16 }">
-      <a-button type="primary" @click="login">로그인</a-button>
+      <a-button @click.prevent="login">로그인</a-button>
+      <div>
+        <a-button style="margin-top: 5px">
+          <router-link :to="{ name: 'user-join' }">회원가입</router-link>
+        </a-button>
+      </div>
     </a-form-item>
   </a-form>
 </template>

@@ -16,6 +16,7 @@
       <div class="ant-upload-text">Upload</div>
     </div>
   </a-upload>
+  마이페이지다
 </template>
 <script>
 import { ref } from "vue";
