@@ -3,7 +3,7 @@ import { useRouter } from "vue-router";
 import { defineStore } from "pinia";
 import { jwtDecode } from "jwt-decode";
 
-import { userConfirm, findById, tokenRegeneration, logout, regist, duplicateIdCheck } from "@/api/user";
+import { userConfirm, findById, tokenRegeneration, logout, regist, duplicateIdCheck, withdraw, modifyMe } from "@/api/user";
 import { httpStatusCode } from "@/util/http-status";
 
 export const useMemberStore = defineStore("memberStore", () => {
@@ -153,6 +153,34 @@ export const useMemberStore = defineStore("memberStore", () => {
     )
   }
 
+  const deleteUser = async (userid) => {
+    await withdraw(
+      userid,
+      (response) => {
+        if (response.status === httpStatusCode.OK) {
+          console.log("회원탈퇴 완료")
+          router.push("/");
+        }
+      }, (error) => {
+        console.log(error);
+      }
+    )
+  }
+
+  const modifyUser = async (modifyingUser) => {
+    await modifyMe(
+      modifyingUser,
+      (response) => {
+        if (response.status === httpStatusCode.OK) {
+          console.log("회원정보 수정 완료")
+          router.push("/user/mypage");
+        }
+      }, (error) => {
+        console.log(error);
+      }
+    )
+  }
+
   return {
     isLogin,
     isLoginError,
@@ -165,5 +193,7 @@ export const useMemberStore = defineStore("memberStore", () => {
     userLogout,
     userRegist,
     checkId,
+    deleteUser,
+    modifyUser,
   };
 });

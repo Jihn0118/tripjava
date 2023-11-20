@@ -70,7 +70,7 @@ const router = createRouter({
         {
           path: "mypage",
           name: "user-mypage",
-          beforeEnter: onlyAuthUser,
+          // beforeEnter: onlyAuthUser,
           component: () => import("@/components/users/UserMyPage.vue"),
         },
         // {

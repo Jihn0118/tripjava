@@ -51,11 +51,7 @@ const checkUserId = async () => {
 <template>
   <a-form layout="horizontal" style="max-width: 500px">
     <a-form-item label="아이디">
-      <a-input
-        style="max-width: 300px"
-        v-model:value="registUser.id"
-        id="id_input"
-      />
+      <a-input style="max-width: 300px" v-model:value="registUser.id" id="id_input" />
       <a-button style="margin-left: 5px" @click="checkUserId" id="btn_checkId"
         >아이디 중복확인</a-button
       >

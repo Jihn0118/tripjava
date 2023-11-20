@@ -1,75 +1,77 @@
-<template>
-  <a-upload
-    v-model:file-list="fileList"
-    name="avatar"
-    list-type="picture-card"
-    class="avatar-uploader"
-    :show-upload-list="false"
-    action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-    :before-upload="beforeUpload"
-    @change="handleChange"
-  >
-    <img v-if="imageUrl" :src="imageUrl" alt="avatar" />
-    <div v-else>
-      <loading-outlined v-if="loading"></loading-outlined>
-      <plus-outlined v-else></plus-outlined>
-      <div class="ant-upload-text">Upload</div>
-    </div>
-  </a-upload>
-  마이페이지다
-</template>
-<script>
+<script setup>
 import { ref } from "vue";
-import { message } from "ant-design-vue";
-function getBase64(img, callback) {
-  const reader = new FileReader();
-  reader.addEventListener("load", () => callback(reader.result));
-  reader.readAsDataURL(img);
-}
-const fileList = ref([]);
-const loading = ref(false);
-const imageUrl = ref("");
-const handleChange = (info) => {
-  if (info.file.status === "uploading") {
-    loading.value = true;
-    return;
-  }
-  if (info.file.status === "done") {
-    // Get this url from response in real world.
-    getBase64(info.file.originFileObj, (base64Url) => {
-      imageUrl.value = base64Url;
-      loading.value = false;
-    });
-  }
-  if (info.file.status === "error") {
-    loading.value = false;
-    message.error("upload error");
-  }
+import { storeToRefs } from "pinia";
+import { useRouter } from "vue-router";
+import { useMemberStore } from "@/stores/member";
+import { useMenuStore } from "@/stores/menu";
+
+const memberStore = useMemberStore();
+
+const { isLogin, userInfo } = storeToRefs(memberStore);
+
+const { getUserInfo, deleteUser, modifyUser } = memberStore;
+
+const jinho = ref({
+  id: "rlawlsgh118",
+  user_name: "진호",
+  birthday: "2020-02-20",
+  gender: "M",
+  member_type: "USER",
+});
+
+const withdraw = async () => {
+  console.log("회원탈퇴 버튼!!!");
+  await deleteUser(jinho.value.id);
 };
-const beforeUpload = (file) => {
-  const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png";
-  if (!isJpgOrPng) {
-    message.error("You can only upload JPG file!");
-  }
-  const isLt2M = file.size / 1024 / 1024 < 2;
-  if (!isLt2M) {
-    message.error("Image must smaller than 2MB!");
-  }
-  return isJpgOrPng && isLt2M;
+
+const modifyMe = async () => {
+  console.log("회원정보수정 버튼!!!");
+  await modifyUser(jinho.value);
 };
 </script>
-<style scoped>
-.avatar-uploader > .ant-upload {
-  width: 128px;
-  height: 128px;
-}
-.ant-upload-select-picture-card i {
-  font-size: 32px;
-  color: #999;
-}
 
-.ant-upload-select-picture-card .ant-upload-text {
-  margin-top: 8px;
-  color: #666;
+<template>
+  <a-descriptions :title="jinho.user_name" bordered :column="1">
+    <a-descriptions-item label="아이디">{{ jinho.id }}</a-descriptions-item>
+    <a-descriptions-item label="생년월일">{{ jinho.birthday }}</a-descriptions-item>
+
+    <a-descriptions-item label="성별">
+      <div v-if="jinho.gender === 'M'">남성</div>
+      <div v-else>여성</div>
+    </a-descriptions-item>
+    <!-- :span="2" -->
+    <a-descriptions-item label="Order time">2018-04-24 18:00:00</a-descriptions-item>
+    <a-descriptions-item label="Usage Time">2019-04-24 18:00:00</a-descriptions-item>
+    <a-descriptions-item label="등급">
+      <a-badge status="processing" :text="jinho.member_type" />
+    </a-descriptions-item>
+    <a-descriptions-item label="프로필 이미지"
+      ><img src="@/assets/logo.png" alt="프로필 이미지 없음"
+    /></a-descriptions-item>
+  </a-descriptions>
+  <a-popconfirm
+    title="정보 수정 페이지로 이동하시겠습니까?"
+    ok-text="이동"
+    cancel-text="취소"
+    @confirm="modifyMe"
+  >
+    <template #icon><question-circle-outlined style="color: red" /></template>
+    <a-button type="primary" class="btn">정보 수정</a-button>
+  </a-popconfirm>
+  <a-popconfirm
+    title="정말 회원탈퇴를 하시겠습니까?"
+    ok-text="탈퇴"
+    cancel-text="취소"
+    @confirm="withdraw"
+  >
+    <template #icon><question-circle-outlined style="color: red" /></template>
+    <a-button type="primary" danger class="btn">회원탈퇴</a-button>
+  </a-popconfirm>
+  <div><font-awesome-icon icon="route" style="width: 50px; height: 50px" /> 나의 여행 계획</div>
+</template>
+
+<style scoped>
+.btn {
+  margin: 5px;
 }
 </style>

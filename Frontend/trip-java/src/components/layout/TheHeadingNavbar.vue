@@ -9,10 +9,7 @@ const { menuList, menuList2 } = storeToRefs(menuStore);
 const { changeMenuState } = menuStore;
 
 const selectedKeys = ref(null);
-// import { useMenuStore } from "@/stores/menu";
-// import { storeToRefs } from "pinia";
 
-// const { menuList } = storeToRefs(menuStore);
 const logout = () => {
   console.log("로그아웃!!!");
   changeMenuState();
@@ -21,7 +18,6 @@ const logout = () => {
 
 <template>
   <a-layout-header>
-    <div class="logo"></div>
     <a-menu
       v-model:selectedKeys="selectedKeys"
       theme="dark"
@@ -31,12 +27,17 @@ const logout = () => {
       justify-content="space-between"
     >
       <div class="header-space-between">
-        <div>
+        <div style="display: flex; flex-direction: row">
+          <router-link :to="{ name: 'home' }">
+            <img
+              src="@/assets/logo.png"
+              alt="로고 사진 없음"
+              style="width: 120px; height: 45px; margin: auto 5px"
+            />
+          </router-link>
           <a-menu-item v-for="menu in menuList" :key="menu.key">
             <div v-if="menu.show">
-              <router-link :to="{ name: menu.routeName }">{{
-                menu.name
-              }}</router-link>
+              <router-link :to="{ name: menu.routeName }">{{ menu.name }}</router-link>
             </div>
           </a-menu-item>
 
@@ -59,18 +60,14 @@ const logout = () => {
             <router-link :to="{ name: 'information' }">Info</router-link>
           </a-menu-item> -->
         </div>
-        <div>
+        <div style="display: flex; flex-direction: row">
           <div v-for="menu2 in menuList2" :key="menu2.routeName">
             <div v-if="menu2.show">
               <div v-if="menu2.routeName === 'user-logout'">
-                <router-link to="/" @click.prevent="logout">{{
-                  menu2.name
-                }}</router-link>
+                <router-link to="/" @click.prevent="logout">{{ menu2.name }}</router-link>
               </div>
               <div v-else>
-                <router-link :to="{ name: menu2.routeName }">{{
-                  menu2.name
-                }}</router-link>
+                <router-link :to="{ name: menu2.routeName }">{{ menu2.name }}</router-link>
               </div>
             </div>
           </div>

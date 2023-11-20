@@ -3,15 +3,15 @@ import { defineStore } from "pinia";
 
 export const useMenuStore = defineStore("menuStore", () => {
   const menuList = ref([
-    { name: "home", show: true, routeName: "home", key: "2" },
-    { name: "plan", show: false, routeName: "plan", key: "1" },
-    { name: "information", show: false, routeName: "information", key: "3" },
-    { name: "mypage", show: false, routeName: "user-mypage", key: "4" },
+    { name: "홈으로", show: true, routeName: "home", key: "2" },
+    { name: "여행계획", show: true, routeName: "plan", key: "1" },
+    { name: "여행지정보", show: true, routeName: "information", key: "3" },
+    { name: "마이페이지", show: true, routeName: "user-mypage", key: "4" },
   ]);
 
   const menuList2 = ref([
-    { name: "logout", show: true, routeName: "user-logout" },
-    { name: "login", show: true, routeName: "user-login" },
+    { name: "로그아웃", show: false, routeName: "user-logout" },
+    { name: "로그인", show: true, routeName: "user-login" },
   ]);
 
   const changeMenuState = () => {
