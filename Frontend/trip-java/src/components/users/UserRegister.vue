@@ -49,7 +49,8 @@ const checkUserId = async () => {
 </script>
 
 <template>
-  <a-form layout="horizontal" style="max-width: 500px">
+  <div></div>
+  <a-form layout="horizontal" style="width: 70%">
     <a-form-item label="아이디">
       <a-input style="max-width: 300px" v-model:value="registUser.id" id="id_input" />
       <a-button style="margin-left: 5px" @click="checkUserId" id="btn_checkId"

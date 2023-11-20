@@ -30,7 +30,7 @@ const footerStyle = {
     <a-layout>
       <the-heading-navbar></the-heading-navbar>
       <!-- <a-layout-content :style="contentStyle"> -->
-      <a-layout-content style="text-align: center">
+      <a-layout-content>
         <router-view></router-view>
       </a-layout-content>
       <a-layout-footer :style="footerStyle">Footer</a-layout-footer>

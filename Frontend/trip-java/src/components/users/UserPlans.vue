@@ -2,6 +2,7 @@
 
 <template>
   <div style="background-color: #ececec; padding: 20px">
+    <h1>나의 여행 계획</h1>
     <a-row :gutter="16">
       <a-col :span="8">
         <a-card title="서울 여행" :bordered="false">
