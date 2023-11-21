@@ -6,16 +6,72 @@ import {infoDetail} from "@/api/attractionInfo";
 import {getHeartStatement, doHeart, cancelHeart, getTotalHeartCount} from "@/api/heart";
 import {useMemberStore} from "@/stores/member";
 import {storeToRefs} from "pinia";
+import {listComment, enrollComment, deleteCommentById} from "@/api/comment";
+
 
 const memberStore = useMemberStore();
 const {userInfo} = storeToRefs(memberStore);
 const totalHeartCount = ref(0);
-
-
 const route = useRoute();
 const Information = ref({})
 let {infoId} = route.params;
 let map;
+
+// 댓글
+const comments = ref([]);
+const content = ref({
+  contentId: "",
+  commentContent: "",
+  memberId: ""
+});
+
+
+function submitComment() {
+  if (content.value) {
+    enrollComment(
+        content.value,
+        () => {
+          getListComment()
+        },
+        (error) => {
+          console.error(error);
+        }
+    )
+    content.value.commentContent = '';
+  }
+}
+
+const getListComment = () => {
+  listComment(
+      infoId,
+      ({data}) => {
+        comments.value = data;
+      },
+      (error) => {
+        console.error(error);
+      }
+  )
+}
+
+const deleteComment = (commentId) => {
+  deleteCommentById(
+      commentId,
+      () => {
+        getListComment();
+      },
+      (error) => {
+        console.error(error);
+      }
+  )
+}
+
+// data
+// private int commentId;
+// private int contentId;
+// private String commentContent;
+// private String memberId;
+// private Date createDate
+
 
 infoDetail(
     infoId,
@@ -96,13 +152,18 @@ const getHeartCount = () => {
 
 
 onMounted(() => {
-  // 현재 사용자의 아이디와 관광지 정보 넣어주기
+  // 현재 사용자의 아이디와 관광지 정보 넣어주기 => 좋아요
   memberIdAndContentId.value.memberId = userInfo.value.memberId;
   memberIdAndContentId.value.contentId = infoId;
+
+  // 현재 사용자의 아이디와 관광지 정보 넣어주기 => 댓글
+  content.value.contentId = infoId;
+  content.value.memberId = userInfo.value.memberId;
 
   // 좋아요 상태 가져오기
   getHeartState();
   getHeartCount();
+  getListComment();
   // 카카오 지도
   const script = document.createElement("script");
   script.src = `//dapi.kakao.com/v2/maps/sdk.js?autoload=false&appkey=${import.meta.env.VITE_KAKAO_MAP_SERVICE_KEY}&libraries=services,clusterer`;
@@ -151,6 +212,22 @@ const loadMarker = () => {
     <font-awesome-icon icon="heart" size="4x" :style="{ color: heartController.color }"/>
   </button>
   <h2>{{ totalHeartCount }}</h2>
+
+  <div>
+    <h1>댓글 화면</h1>
+
+    <div id="commentContainer">
+      <div v-for="comment in comments" :key="comment.commentId">
+        <strong>{{ comment.memberId }}</strong>: {{ comment.commentContent }}
+        <button @click="deleteComment(comment.commentId)">지우기</button>
+      </div>
+    </div>
+
+    <form @submit.prevent="submitComment">
+      <textarea v-model="content.commentContent" placeholder="댓글 내용"></textarea>
+      <button type="submit">댓글 작성</button>
+    </form>
+  </div>
 
 </template>
 
