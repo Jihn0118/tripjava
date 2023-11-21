@@ -6,7 +6,7 @@ import site.tripjava.tripjava.tripPlan.model.TravelPlan;
 import java.sql.SQLException;
 import java.util.List;
 
-public interface TripPlanService {
+public interface TravelPlanService {
 
     void registerTripPlan(TravelPlan travelPlan) throws SQLException;
 

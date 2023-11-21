@@ -6,16 +6,16 @@ import org.springframework.transaction.annotation.Transactional;
 import site.tripjava.tripjava.tripPlan.model.Day;
 import site.tripjava.tripjava.tripPlan.model.TravelPlan;
 import site.tripjava.tripjava.tripPlan.model.TravelPlanDetail;
-import site.tripjava.tripjava.tripPlan.model.mapper.TripPlanMapper;
+import site.tripjava.tripjava.tripPlan.model.mapper.TravelPlanMapper;
 
 import java.sql.SQLException;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class TripPlanServiceImpl implements TripPlanService {
+public class TravelPlanServiceImpl implements TravelPlanService {
 
-    private final TripPlanMapper tripPlanMapper;
+    private final TravelPlanMapper tripPlanMapper;
 
     @Override
     @Transactional

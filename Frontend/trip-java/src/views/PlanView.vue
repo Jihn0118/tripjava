@@ -1,17 +1,16 @@
-npm i<script setup>
-
+<script setup>
 import PlanMenu from "@/components/plan/PlanMenu.vue";
-
+import { ref } from "vue";
 </script>
 
 <template>
   <div>
-  <a-row>
-    <a-col :span="10">
-      <PlanMenu></PlanMenu>
-    </a-col>
-    <a-col :span="14">col</a-col>
-  </a-row>
+    <a-row>
+      <a-col :span="10">
+        <PlanMenu></PlanMenu>
+      </a-col>
+      <a-col :span="14">col</a-col>
+    </a-row>
   </div>
 </template>
 

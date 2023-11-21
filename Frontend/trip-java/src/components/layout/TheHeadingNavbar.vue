@@ -10,8 +10,6 @@ const memberStore = useMemberStore();
 const { userInfo, isLogin } = storeToRefs(memberStore);
 const { userLogout } = memberStore;
 
-console.log("헤딩바: " + userInfo.value);
-
 const selectedKeys = ref(null);
 
 const logout = () => {

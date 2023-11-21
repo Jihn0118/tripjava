@@ -1,68 +1,72 @@
-<template>
-  <a-menu
-      id="dddddd"
-      v-model:openKeys="openKeys"
-      v-model:selectedKeys="selectedKeys"
-      style="width: 256px"
-      mode="inline"
-      :items="items"
-      @click="handleClick"
-  ></a-menu>
-</template>
-<script lang="ts" setup>
-import { reactive, ref, watch, VueElement, h } from 'vue';
-import { MailOutlined, AppstoreOutlined, SettingOutlined } from '@ant-design/icons-vue';
-import type { MenuProps, ItemType } from 'ant-design-vue';
+<script>
+import { ref, watch } from "vue";
+const selectedKeys = ref(["1"]);
+const openKeys = ref(["sub1"]);
 
-const selectedKeys = ref<string[]>(['1']);
-const openKeys = ref<string[]>(['sub1']);
-
-function getItem(
-    label: VueElement | string,
-    key: string,
-    icon?: any,
-    children?: ItemType[],
-    type?: 'group',
-): ItemType {
+const getItem = (label, key, children, type) => {
   return {
     key,
-    icon,
     children,
     label,
     type,
-  } as ItemType;
-}
-
-const items: ItemType[] = reactive([
-  getItem('Navigation One', 'sub1', () => h(MailOutlined), [
-    getItem('Item 1', 'g1', null, [getItem('Option 1', '1'), getItem('Option 2', '2')], 'group'),
-    getItem('Item 2', 'g2', null, [getItem('Option 3', '3'), getItem('Option 4', '4')], 'group'),
-  ]),
-
-  getItem('Navigation Two', 'sub2', () => h(AppstoreOutlined), [
-    getItem('Option 5', '5'),
-    getItem('Option 6', '6'),
-    getItem('Submenu', 'sub3', null, [getItem('Option 7', '7'), getItem('Option 8', '8')]),
-  ]),
-
-  { type: 'divider' },
-
-  getItem('Navigation Three', 'sub4', () => h(SettingOutlined), [
-    getItem('Option 9', '9'),
-    getItem('Option 10', '10'),
-    getItem('Option 11', '11'),
-    getItem('Option 12', '12'),
-  ]),
-
-  getItem('Group', 'grp', null, [getItem('Option 13', '13'), getItem('Option 14', '14')], 'group'),
-]);
-
-const handleClick: MenuProps['onClick'] = e => {
-  console.log('click', e);
+  };
 };
 
-watch(openKeys, val => {
-  console.log('openKeys', val);
+const items = ref([
+  getItem("날짜 선택", "sub1", [
+    getItem(
+      "Item 1",
+      "g1",
+      [getItem("Option 1", "1"), getItem("Option 2", "2")],
+      "group"
+    ),
+    getItem(
+      "Item 2",
+      "g2",
+      [getItem("Option 3", "3"), getItem("Option 4", "4")],
+      "group"
+    ),
+  ]),
+  getItem("장소 선택", "sub2", [
+    getItem("Option 5", "5"),
+    getItem("Option 6", "6"),
+    getItem("Submenu", "sub3", [
+      getItem("Option 7", "7"),
+      getItem("Option 8", "8"),
+    ]),
+  ]),
+  {
+    type: "divider",
+  },
+  getItem("숙소 선택", "sub4", [
+    getItem("Option 9", "9"),
+    getItem("Option 10", "10"),
+    getItem("Option 11", "11"),
+    getItem("Option 12", "12"),
+  ]),
+  getItem(
+    "Group",
+    "grp",
+
+    [getItem("Option 13", "13"), getItem("Option 14", "14")],
+    "group"
+  ),
+]);
+const handleClick = (e) => {
+  console.log("click", e);
+};
+watch(openKeys, (val) => {
+  console.log("openKeys", val);
 });
 </script>
-
+<template>
+  <a-menu
+    id="dddddd"
+    v-model:openKeys="openKeys"
+    v-model:selectedKeys="selectedKeys"
+    style="width: 256px"
+    mode="inline"
+    :items="items"
+    @click="handleClick"
+  ></a-menu>
+</template>
