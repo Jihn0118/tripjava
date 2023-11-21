@@ -22,6 +22,7 @@ public class HeartServiceImpl implements HeartService {
     @Override
     public boolean getHeartState(BoardAndMember boardAndMember) throws SQLException {
         int isHeart = heartMapper.getHeartState(boardAndMember);
+        System.out.println(isHeart);
         if (isHeart > 0) {
             return true;
         }

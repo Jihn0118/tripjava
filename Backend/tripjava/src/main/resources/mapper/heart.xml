@@ -4,7 +4,26 @@
 
 <mapper namespace="site.tripjava.tripjava.heart.model.mapper.HeartMapper">
 
+    <select id="getHeartCount" parameterType="int" resultType="int">
+        select count(*)
+        from heart
+        where content_id = #{contentId}
+    </select>
 
+    <select id="getHeartState" parameterType="boardAndMember" resultType="int">
+        select count(*)
+        from heart
+        where content_id = #{contentId} and member_id = #{memberId}
+    </select>
 
+    <insert id="doHeart" parameterType="heartRequest">
+        insert into heart (member_id, content_id)
+        values(#{memberId}, #{contentId})
+    </insert>
+
+    <delete id="cancelHeart" parameterType="heartRequest">
+        delete from heart
+        where member_id = #{memberId} and content_id = #{contentId}
+    </delete>
 
 </mapper>

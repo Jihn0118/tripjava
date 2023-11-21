@@ -23,17 +23,21 @@ public class HeartController {
 
     @GetMapping("/heartState")
     public ResponseEntity<Boolean> getHeartState(BoardAndMember boardAndMember) throws SQLException{
+        System.out.println("hello");
+        System.out.println(boardAndMember);
         return ResponseEntity.ok(heartService.getHeartState(boardAndMember));
     }
 
     @PostMapping
     public ResponseEntity<Void> doHeart(@RequestBody HeartRequest heartRequest) throws SQLException {
+        System.out.println("?-0980979087");
         heartService.doHeart(heartRequest);
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping
     public ResponseEntity<Void> cancelHeart(@RequestBody HeartRequest heartRequest) throws SQLException {
+        System.out.println("?123123123123123");
         heartService.cancelHeart(heartRequest);
         return ResponseEntity.ok().build();
     }
