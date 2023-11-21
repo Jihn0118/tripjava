@@ -58,9 +58,7 @@ export const useMemberStore = defineStore(
     };
 
     const getUserInfo = (token) => {
-      console.log("생 토큰값: " + token);
       let decodeToken = jwtDecode(token);
-      console.log("토큰값: " + decodeToken.memberId);
       findById(
         decodeToken.memberId,
         (response) => {

@@ -17,7 +17,7 @@
     <select id="login" parameterType="map" resultMap="member">
         select member_id, name, token
         from members
-        where member_id = #{id} and password = #{password}
+        where member_id = #{memberId} and password = #{password}
     </select>
 
     <select id="userInfo" parameterType="string" resultMap="member">

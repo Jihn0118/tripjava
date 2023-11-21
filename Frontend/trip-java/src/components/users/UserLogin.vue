@@ -3,7 +3,6 @@ import { ref } from "vue";
 import { storeToRefs } from "pinia";
 import { useRouter } from "vue-router";
 import { useMemberStore } from "@/stores/member";
-import { useMenuStore } from "@/stores/menu";
 
 const router = useRouter();
 
@@ -13,16 +12,16 @@ const { isLogin } = storeToRefs(memberStore);
 const { userLogin, getUserInfo } = memberStore;
 
 const loginUser = ref({
-  id: "",
+  memberId: "",
   password: "",
 });
 //
 const login = async () => {
+  console.log(loginUser.value);
   await userLogin(loginUser.value);
   let token = sessionStorage.getItem("accessToken");
   if (isLogin.value) {
     getUserInfo(token);
-    console.log("로그인 성공했고!!!");
     router.push("/");
   }
 };
@@ -35,7 +34,7 @@ const login = async () => {
     :wrapper-col="{ span: 6 }"
   >
     <a-form-item label="아이디" name="id">
-      <a-input v-model:value="loginUser.id" />
+      <a-input v-model:value="loginUser.memberId" />
     </a-form-item>
 
     <!-- :rules="[{ required: true }]" -->
