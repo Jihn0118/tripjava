@@ -25,6 +25,8 @@ public class AttractionInfo {
     // 경도
     private BigDecimal longitude;
     // 좋아요
-    private int heart;
+    private int love;
+    //
+    private String description;
 
 }
