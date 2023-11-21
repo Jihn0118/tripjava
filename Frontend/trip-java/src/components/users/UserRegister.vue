@@ -13,9 +13,9 @@ const { isChecked } = storeToRefs(memberStore);
 const { userRegist, checkId } = memberStore;
 
 const registUser = ref({
-  id: "",
+  memberId: "",
   password: "",
-  userName: "",
+  name: "",
   birthday: "",
   gender: "M",
   image: "",
@@ -31,11 +31,11 @@ const regist = async () => {
 };
 
 const checkUserId = async () => {
-  if (registUser.value.id == "") {
+  if (registUser.value.memberId == "") {
     checkIdAnswer.value = "아이디를 입력하세요";
     return;
   }
-  await checkId(registUser.value.id);
+  await checkId(registUser.value.memberId);
   if (isChecked.value === true) {
     id_input.disabled = true;
     btn_checkId.disabled = true;
@@ -52,7 +52,11 @@ const checkUserId = async () => {
   <div></div>
   <a-form layout="horizontal" style="width: 70%">
     <a-form-item label="아이디">
-      <a-input style="max-width: 300px" v-model:value="registUser.id" id="id_input" />
+      <a-input
+        style="max-width: 300px"
+        v-model:value="registUser.memberId"
+        id="id_input"
+      />
       <a-button style="margin-left: 5px" @click="checkUserId" id="btn_checkId"
         >아이디 중복확인</a-button
       >
@@ -65,7 +69,7 @@ const checkUserId = async () => {
       <a-input-password />
     </a-form-item>
     <a-form-item label="닉네임">
-      <a-input v-model:value="registUser.userName" />
+      <a-input v-model:value="registUser.name" />
     </a-form-item>
     <a-form-item label="생년월일" name="birthday">
       <a-date-picker v-model:value="registUser.birthday" format="YYYY-MM-DD" />

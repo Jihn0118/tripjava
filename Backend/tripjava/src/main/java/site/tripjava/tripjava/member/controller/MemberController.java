@@ -29,22 +29,18 @@ public class MemberController {
     @PostMapping("/login")
     public ResponseEntity<Map<String, Object>> login(
             @RequestBody MemberDto memberDto) {
-        System.out.println("로그인 들어왔다!!!");
         Map<String, Object> resultMap = new HashMap<String, Object>();
         HttpStatus status = HttpStatus.ACCEPTED;
         try {
-            System.out.println("로그인시도유저:" + memberDto.toString());
             MemberDto loginUser = memberService.login(memberDto);
 
-            System.out.println("로그인 결과 유저: " + loginUser.toString());
-            if(loginUser.getId() != null) {
-                String accessToken = jwtUtil.createAccessToken(loginUser.getId());
-                String refreshToken = jwtUtil.createRefreshToken(loginUser.getId());
+            if(loginUser.getMemberId() != null) {
+                String accessToken = jwtUtil.createAccessToken(loginUser.getMemberId());
+                String refreshToken = jwtUtil.createRefreshToken(loginUser.getMemberId());
 
 //				발급받은 refresh token을 DB에 저장.
-                memberService.saveRefreshToken(loginUser.getId(), refreshToken);
+                memberService.saveRefreshToken(loginUser.getMemberId(), refreshToken);
 
-                System.out.println("야호" + memberService.getRefreshToken(loginUser.getId()).toString());
 //				JSON으로 token 전달.
                 resultMap.put("access-token", accessToken);
                 resultMap.put("refresh-token", refreshToken);
@@ -74,9 +70,7 @@ public class MemberController {
             log.info("사용 가능한 토큰!!!");
             try {
 //				로그인 사용자 정보.
-                System.out.println("서버 getInfo:  " + userId);
                 MemberDto memberDto = memberService.userInfo(userId);
-                System.out.println("서버 getInfo의 memberDto:  " + memberDto);
                 resultMap.put("userInfo", memberDto);
                 status = HttpStatus.OK;
             } catch (Exception e) {
@@ -96,7 +90,6 @@ public class MemberController {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         try {
-            System.out.println("로그아웃!!! 리프레쉬토큰 삭제!!!");
             memberService.deleteRefreshToken(userId);
             status = HttpStatus.OK;
         } catch (Exception e) {
@@ -116,8 +109,8 @@ public class MemberController {
         String token = request.getHeader("refreshToken");
         log.debug("token : {}, memberDto : {}", token, memberDto);
         if (jwtUtil.checkToken(token)) {
-            if (token.equals(memberService.getRefreshToken(memberDto.getId()))) {
-                String accessToken = jwtUtil.createAccessToken(memberDto.getId());
+            if (token.equals(memberService.getRefreshToken(memberDto.getMemberId()))) {
+                String accessToken = jwtUtil.createAccessToken(memberDto.getMemberId());
                 log.debug("token : {}", accessToken);
                 log.debug("정상적으로 액세스토큰 재발급!!!");
                 resultMap.put("access-token", accessToken);
@@ -136,6 +129,7 @@ public class MemberController {
         HttpStatus status;
 
         try {
+            memberDto.setMemberType("USER");
             memberService.join(memberDto);
             status = HttpStatus.OK;
         } catch (Exception e) {
@@ -154,7 +148,6 @@ public class MemberController {
 
         try {
             memberService.deleteMember(userid);
-            System.out.println("회원탈퇴 시도");
             status = HttpStatus.OK;
         } catch (Exception e) {
             log.error("회원탈퇴 실패 : {}", e);
@@ -169,7 +162,7 @@ public class MemberController {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status;
 
-        memberDto.setId(id);
+        memberDto.setMemberId(id);
 
         try {
             memberService.updateMember(memberDto);
@@ -193,7 +186,6 @@ public class MemberController {
             status = HttpStatus.OK;
             resultMap.put("result", result);
         } catch (Exception e) {
-            System.out.println("아이디 체크 실패");
             log.error("아이디 체크 실패 : {}", e);
             resultMap.put("message", e.getMessage());
             status = HttpStatus.INTERNAL_SERVER_ERROR;
