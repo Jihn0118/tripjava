@@ -11,9 +11,14 @@ function doHeart(param, success, fail) {
 }
 
 function cancelHeart(param, success, fail) {
-    local.delete("/heart", param).then(success).catch(fail);
+    local.delete("/heart", {params: param}).then(success).catch(fail);
+}
+
+
+function getTotalHeartCount(contentId, success, fail) {
+    local.get(`/heart/count/${contentId}`).then(success).catch(fail);
 }
 
 export {
-    getHeartStatement, doHeart, cancelHeart
+    getHeartStatement, doHeart, cancelHeart, getTotalHeartCount
 };

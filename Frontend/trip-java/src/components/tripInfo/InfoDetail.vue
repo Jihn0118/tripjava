@@ -3,12 +3,13 @@
 import {onMounted, ref, watch} from "vue";
 import {useRoute, useRouter} from "vue-router";
 import {infoDetail} from "@/api/attractionInfo";
-import {getHeartStatement, doHeart, cancelHeart} from "@/api/heart";
+import {getHeartStatement, doHeart, cancelHeart, getTotalHeartCount} from "@/api/heart";
 import {useMemberStore} from "@/stores/member";
 import {storeToRefs} from "pinia";
 
 const memberStore = useMemberStore();
 const {userInfo} = storeToRefs(memberStore);
+const totalHeartCount = ref(0);
 
 
 const route = useRoute();
@@ -39,7 +40,8 @@ const loveClick = () => {
     cancelHeart(
         memberIdAndContentId.value,
         () => {
-          getHeartStatement();
+          getHeartState();
+          getHeartCount();
         },
         (error) => {
           console.error(error);
@@ -48,8 +50,9 @@ const loveClick = () => {
   } else {
     doHeart(
         memberIdAndContentId.value,
-        ({data}) => {
-          getHeartStatement();
+        () => {
+          getHeartState();
+          getHeartCount();
         },
         (error) => {
           console.error(error);
@@ -72,7 +75,6 @@ const getHeartState = () => {
       memberIdAndContentId.value,
       ({data}) => {
         isLiked.value = data;
-        console.log("값은" + isLiked.value)
       },
       (error) => {
         console.log(error)
@@ -80,15 +82,27 @@ const getHeartState = () => {
   )
 }
 
-onMounted(() => {
+const getHeartCount = () => {
+  getTotalHeartCount(
+      infoId,
+      ({data}) => {
+        totalHeartCount.value = data;
+      },
+      (error) => {
+        console.error(error);
+      }
+  )
+}
 
+
+onMounted(() => {
   // 현재 사용자의 아이디와 관광지 정보 넣어주기
   memberIdAndContentId.value.memberId = userInfo.value.memberId;
   memberIdAndContentId.value.contentId = infoId;
 
   // 좋아요 상태 가져오기
   getHeartState();
-
+  getHeartCount();
   // 카카오 지도
   const script = document.createElement("script");
   script.src = `//dapi.kakao.com/v2/maps/sdk.js?autoload=false&appkey=${import.meta.env.VITE_KAKAO_MAP_SERVICE_KEY}&libraries=services,clusterer`;
@@ -136,6 +150,7 @@ const loadMarker = () => {
   <button class="custom-button" @click="loveClick" :class="{ active: isLiked }">
     <font-awesome-icon icon="heart" size="4x" :style="{ color: heartController.color }"/>
   </button>
+  <h2>{{ totalHeartCount }}</h2>
 
 </template>
 
