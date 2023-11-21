@@ -13,13 +13,12 @@ import java.util.List;
 @Builder
 @ToString
 public class MemberDto {
-    private String id;
+    private String memberId;
     private String password;
-    private String userName;
+    private String name;
     private LocalDate birthday;
     private String gender;
     private String image;
-    private String loginType;
     private String memberType;
     private String role;
     private String token;

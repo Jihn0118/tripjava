@@ -1,0 +1,6 @@
+워크벤치
+왼쪽 상단 Navigator
+Administration
+Data Import/Restore
+Import Options - Import from Self-Contained File에서 다운 받은 sql 파일 선택
+Start Import
