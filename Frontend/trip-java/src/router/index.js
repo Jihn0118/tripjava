@@ -1,9 +1,12 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
 import LoginRedirectView from "../views/LoginRedirectView.vue";
-import LoginView from "../views/LoginView.vue";
 import Planview from "@/views/PlanView.vue";
 import InformationView from "@/views/InformationView.vue";
+import PlanCalendarView from "@/views/plan/PlanCalendarView.vue";
+import PlanLocationView from "@/views/plan/PlanLocationView.vue";
+import PlanLodgingView from "@/views/plan/PlanLodgingView.vue";
+
 import { storeToRefs } from "pinia";
 import { useMemberStore } from "@/stores/member";
 
@@ -41,6 +44,22 @@ const router = createRouter({
       path: "/plan",
       name: "plan",
       component: Planview,
+      children: [
+        {
+          path: "/1",
+          name: "plan-menu-calendar",
+          component: PlanCalendarView,
+        },
+        {
+          path: "/2",
+          name: "plan-menu-location",
+          component: PlanLocationView,
+        },{
+          path: "/3",
+          name: "plan-menu-calendar",
+          component: PlanLodgingView,
+        },
+      ]
     },
     {
       path: "/information",

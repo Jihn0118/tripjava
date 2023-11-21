@@ -6,10 +6,11 @@ import { ref } from "vue";
 <template>
   <div>
     <a-row>
-      <a-col :span="10">
+      <!-- 10 14 -->
+      <a-col :span="20">
         <PlanMenu></PlanMenu>
       </a-col>
-      <a-col :span="14">col</a-col>
+      <a-col :span="1">col</a-col>
     </a-row>
   </div>
 </template>
