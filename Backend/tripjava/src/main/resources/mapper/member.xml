@@ -8,6 +8,7 @@
         <result column="user_name" property="userName"/>
         <result column="birthday" property="birthday"/>
         <result column="gender" property="gender"/>
+        <result column="image" property="image"/>
         <result column="login_type" property="loginType"/>
         <result column="member_type" property="memberType"/>
         <result column="role" property="role"/>
@@ -21,9 +22,9 @@
     </select>
 
     <select id="userInfo" parameterType="string" resultMap="member">
-        select id, password, user_name, birthday, gender, login_type, member_type, role, token
+        select id, user_name, birthday, gender, image, login_type, member_type, role, token
         from members
-        where id = #{id}
+        where id = #{userId}
     </select>
 
     <update id="saveRefreshToken" parameterType="map">

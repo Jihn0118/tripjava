@@ -33,9 +33,11 @@ public class MemberController {
         Map<String, Object> resultMap = new HashMap<String, Object>();
         HttpStatus status = HttpStatus.ACCEPTED;
         try {
+            System.out.println("로그인시도유저:" + memberDto.toString());
             MemberDto loginUser = memberService.login(memberDto);
 
-            if(loginUser != null) {
+            System.out.println("로그인 결과 유저: " + loginUser.toString());
+            if(loginUser.getId() != null) {
                 String accessToken = jwtUtil.createAccessToken(loginUser.getId());
                 String refreshToken = jwtUtil.createRefreshToken(loginUser.getId());
 
@@ -72,7 +74,9 @@ public class MemberController {
             log.info("사용 가능한 토큰!!!");
             try {
 //				로그인 사용자 정보.
+                System.out.println("서버 getInfo:  " + userId);
                 MemberDto memberDto = memberService.userInfo(userId);
+                System.out.println("서버 getInfo의 memberDto:  " + memberDto);
                 resultMap.put("userInfo", memberDto);
                 status = HttpStatus.OK;
             } catch (Exception e) {
@@ -92,6 +96,7 @@ public class MemberController {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         try {
+            System.out.println("로그아웃!!! 리프레쉬토큰 삭제!!!");
             memberService.deleteRefreshToken(userId);
             status = HttpStatus.OK;
         } catch (Exception e) {
@@ -143,12 +148,13 @@ public class MemberController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteMember(@PathVariable String id){
+    public ResponseEntity<?> deleteMember(@PathVariable("id") String userid){
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status;
 
         try {
-            memberService.deleteMember(id);
+            memberService.deleteMember(userid);
+            System.out.println("회원탈퇴 시도");
             status = HttpStatus.OK;
         } catch (Exception e) {
             log.error("회원탈퇴 실패 : {}", e);
