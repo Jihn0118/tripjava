@@ -11,23 +11,20 @@ const memberStore = useMemberStore();
 
 const { isLogin } = storeToRefs(memberStore);
 const { userLogin, getUserInfo } = memberStore;
-const { changeMenuState } = useMenuStore();
 
 const loginUser = ref({
   id: "",
   password: "",
 });
-
+//
 const login = async () => {
-  console.log("UserLogin.vue 로그인!!!!");
   await userLogin(loginUser.value);
   let token = sessionStorage.getItem("accessToken");
-  if (isLogin) {
+  if (isLogin.value) {
     getUserInfo(token);
-    console.log("changeMenuState() 제발 호출!!!");
-    changeMenuState();
+    console.log("로그인 성공했고!!!");
+    router.push("/");
   }
-  router.push("/");
 };
 </script>
 
@@ -55,11 +52,10 @@ const login = async () => {
 
     <a-form-item :wrapper-col="{ offset: 8, span: 16 }">
       <a-button @click.prevent="login">로그인</a-button>
-      <div>
-        <a-button style="margin-top: 5px">
-          <router-link :to="{ name: 'user-join' }">회원가입</router-link>
-        </a-button>
-      </div>
+
+      <a-button style="margin-left: 5px">
+        <router-link :to="{ name: 'user-join' }">회원가입</router-link>
+      </a-button>
     </a-form-item>
   </a-form>
 </template>
