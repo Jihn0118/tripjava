@@ -79,7 +79,7 @@ const select = (plan) => {
     for (let i = 0; i < plan.days.length; i++) {
       if (plan.days[i].day == selectValue.value) {
         console.log("기존에 " + plan.days[i].day + "일차에 데이터 있음");
-        plan.days[i].attractions.push(item);
+        plan.days[i].attractions.push(itemToAdd.value);
       }
     }
   }
