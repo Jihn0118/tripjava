@@ -1,9 +1,12 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
 import LoginRedirectView from "../views/LoginRedirectView.vue";
-import LoginView from "../views/LoginView.vue";
 import Planview from "@/views/PlanView.vue";
 import InformationView from "@/views/InformationView.vue";
+import PlanCalendar from "@/components/plan/PlanCalendar.vue";
+import PlanLocation from "@/components/plan/PlanLocation.vue";
+import PlanLodging from "@/components/plan/PlanLodging.vue";
+
 import { storeToRefs } from "pinia";
 import { useMemberStore } from "@/stores/member";
 
@@ -41,6 +44,22 @@ const router = createRouter({
       path: "/plan",
       name: "plan",
       component: Planview,
+      // children: [
+      //   {
+      //     path: "/1",
+      //     name: "plan-menu-calendar",
+      //     component: PlanCalendar,
+      //   },
+      //   {
+      //     path: "/2",
+      //     name: "plan-menu-location",
+      //     component: PlanLocation,
+      //   },{
+      //     path: "/3",
+      //     name: "plan-menu-calendar",
+      //     component: PlanLodging,
+      //   },
+      // ]
     },
     {
       path: "/information",
@@ -48,9 +67,9 @@ const router = createRouter({
       component: InformationView,
     },
     {
-      path: '/information/:infoId',
-      name: 'information-detail',
-      component: ()=>import("@/components/tripInfo/InfoDetail.vue")
+      path: "/information/:infoId",
+      name: "information-detail",
+      component: () => import("@/components/tripInfo/InfoDetail.vue"),
     },
     {
       path: "/user",
@@ -82,7 +101,7 @@ const router = createRouter({
           path: "myplan",
           name: "user-plan",
           component: () => import("@/components/users/UserPlans.vue"),
-        }
+        },
         // {
         //   path: "modify/:userid",
         //   name: "user-modify",

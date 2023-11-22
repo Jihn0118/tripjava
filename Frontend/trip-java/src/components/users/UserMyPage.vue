@@ -12,8 +12,8 @@ const { deleteUser, modifyUser } = memberStore;
 
 const withdraw = async () => {
   console.log("회원탈퇴 버튼!!!");
-  console.log(userInfo.value.id);
-  await deleteUser(userInfo.value.id);
+  console.log(userInfo.value.memberId);
+  await deleteUser(userInfo.value.memberId);
 };
 
 const modifyMe = async () => {
@@ -24,7 +24,9 @@ const modifyMe = async () => {
 
 <template>
   <a-descriptions :title="userInfo.user_name" bordered :column="1">
-    <a-descriptions-item label="아이디">{{ userInfo.id }}</a-descriptions-item>
+    <a-descriptions-item label="아이디">{{
+      userInfo.memberId
+    }}</a-descriptions-item>
     <a-descriptions-item label="생년월일">{{
       userInfo.birthday
     }}</a-descriptions-item>

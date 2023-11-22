@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import site.tripjava.tripjava.tripPlan.model.Day;
 import site.tripjava.tripjava.tripPlan.model.TravelPlan;
-import site.tripjava.tripjava.tripPlan.model.service.TripPlanService;
+import site.tripjava.tripjava.tripPlan.model.service.TravelPlanService;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -14,9 +14,9 @@ import java.util.List;
 @RestController
 @RequestMapping("/plan")
 @RequiredArgsConstructor
-public class TripPlanController {
+public class TravelPlanController {
 
-    private final TripPlanService tripPlanService;
+    private final TravelPlanService tripPlanService;
 
     @PostMapping
     public ResponseEntity<Void> registerTravelPlans(@RequestBody TravelPlan travelPlan) throws SQLException {

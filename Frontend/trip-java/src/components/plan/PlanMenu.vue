@@ -1,68 +1,188 @@
-<template>
-  <a-menu
-      id="dddddd"
-      v-model:openKeys="openKeys"
-      v-model:selectedKeys="selectedKeys"
-      style="width: 256px"
-      mode="inline"
-      :items="items"
-      @click="handleClick"
-  ></a-menu>
-</template>
-<script lang="ts" setup>
-import { reactive, ref, watch, VueElement, h } from 'vue';
-import { MailOutlined, AppstoreOutlined, SettingOutlined } from '@ant-design/icons-vue';
-import type { MenuProps, ItemType } from 'ant-design-vue';
+<script setup>
+import { h, ref, onMounted } from "vue";
+import {
+  HomeOutlined,
+  CalendarOutlined,
+  AimOutlined,
+} from "@ant-design/icons-vue";
 
-const selectedKeys = ref<string[]>(['1']);
-const openKeys = ref<string[]>(['sub1']);
+import { message } from "ant-design-vue";
 
-function getItem(
-    label: VueElement | string,
-    key: string,
-    icon?: any,
-    children?: ItemType[],
-    type?: 'group',
-): ItemType {
-  return {
-    key,
-    icon,
-    children,
-    label,
-    type,
-  } as ItemType;
-}
+import PlanLocation from "./PlanLocation.vue";
+import PlanCalendar from "./PlanCalendar.vue";
+import PlanLodging from "./PlanLodging.vue";
+import { listInfo } from "@/api/attractionInfo";
 
-const items: ItemType[] = reactive([
-  getItem('Navigation One', 'sub1', () => h(MailOutlined), [
-    getItem('Item 1', 'g1', null, [getItem('Option 1', '1'), getItem('Option 2', '2')], 'group'),
-    getItem('Item 2', 'g2', null, [getItem('Option 3', '3'), getItem('Option 4', '4')], 'group'),
-  ]),
+const menuNumber = ref("1");
 
-  getItem('Navigation Two', 'sub2', () => h(AppstoreOutlined), [
-    getItem('Option 5', '5'),
-    getItem('Option 6', '6'),
-    getItem('Submenu', 'sub3', null, [getItem('Option 7', '7'), getItem('Option 8', '8')]),
-  ]),
-
-  { type: 'divider' },
-
-  getItem('Navigation Three', 'sub4', () => h(SettingOutlined), [
-    getItem('Option 9', '9'),
-    getItem('Option 10', '10'),
-    getItem('Option 11', '11'),
-    getItem('Option 12', '12'),
-  ]),
-
-  getItem('Group', 'grp', null, [getItem('Option 13', '13'), getItem('Option 14', '14')], 'group'),
+const selectedKeys = ref([]);
+const openKeys = ref([]);
+const items = ref([
+  {
+    key: "1",
+    icon: () => h(CalendarOutlined),
+    label: "STEP 1 날짜 설정",
+    title: "STEP 1 날짜 설정",
+  },
+  {
+    key: "2",
+    icon: () => h(AimOutlined),
+    label: "STEP 2 장소 선택",
+    title: "STEP 2 장소 선택",
+  },
+  {
+    key: "3",
+    icon: () => h(HomeOutlined),
+    label: "STEP 3 숙소 설정",
+    title: "STEP 3 숙소 설정",
+  },
 ]);
 
-const handleClick: MenuProps['onClick'] = e => {
-  console.log('click', e);
+const handleClick = (menuInfo) => {
+  menuNumber.value = menuInfo.key;
 };
 
-watch(openKeys, val => {
-  console.log('openKeys', val);
+const emit = defineEmits(["setTripdate"]);
+
+const setTripdate = (val) => {
+  plan.title = val.title;
+  plan.startDate = val.startDate;
+  plan.endDate = val.endDate;
+  plan.dateDiff = val.dateDiff;
+
+  message.success("날짜가 성공적으로 저장되었습니다.");
+
+  // // 기존에 선택된 메뉴의 클래스를 제거
+  // items.value.forEach((item) => {
+  //   item.class = "ant-menu-item";
+  // });
+
+  menuNumber.value = "2";
+
+  // items.value[1].class = "ant-menu-item-selected";
+};
+
+// 여행 일정 객체
+// 제목, 여행 시작 날짜, 여행 종료 날짜, 몇 일 간의 여행인지
+const plan = ref({
+  title: "",
+  startDate: "",
+  endDate: "",
+  dateDiff: 0,
+  days: [
+    // {
+    //   day: Number,
+    //   attractions: Array,
+    //   lodging: Object,
+    // },
+    // [
+    //   {
+    //     attractions: [
+    //       {
+    //         contentId: Number,
+    //         title: String,
+    //         image: String,
+    //         latitude: Number,
+    //         longitude: Number,
+    //         love: Number,
+    //         description: String,
+    //       },
+    //     ],
+    //     lodging: {
+    //       contentId: Number,
+    //       title: String,
+    //       image: String,
+    //       latitude: Number,
+    //       longitude: Number,
+    //       love: Number,
+    //       description: String,
+    //     },
+    //   },
+    // ],
+  ],
+});
+
+// 관광지 정보
+const infoList = ref([]);
+
+const filteredLocationList = ref([]);
+const filteredLodgingList = ref([]);
+
+const getInfoList = () => {
+  listInfo(
+    searchCondition.value,
+    ({ data }) => {
+      infoList.value = data;
+      for (let i = 0; i < infoList.value.length; i++) {
+        if (infoList.value[i].contentTypeId == 32) {
+          filteredLodgingList.value = [
+            ...filteredLodgingList.value,
+            infoList.value[i],
+          ];
+        } else {
+          filteredLocationList.value = [
+            ...filteredLocationList.value,
+            infoList.value[i],
+          ];
+        }
+      }
+    },
+    (err) => {
+      console.log(err);
+    }
+  );
+};
+
+onMounted(() => {
+  getInfoList();
+});
+
+const searchCondition = ref({
+  contentType: "",
+  keyword: "",
+  sidoCode: "",
 });
 </script>
 
+<template>
+  <div style="display: flex; flex-direction: row">
+    <div style="height: 700px">
+      <a-menu
+        v-model:openKeys="openKeys"
+        v-model:selectedKeys="selectedKeys"
+        class="menu"
+        mode="vertical"
+        :items="items"
+        @click="handleClick"
+      />
+      <a-button type="primary">일정 저장</a-button>
+    </div>
+    <div>
+      <!--자식 컴포넌트들 넣고 props emits으로 메뉴 부모한테 보내고 메뉴 부모에서 버튼 누르면 모든 여행 계획 데이터가 저장-->
+      <PlanCalendar
+        v-show="menuNumber === '1'"
+        :plan="plan"
+        @set-tripdate="setTripdate"
+      />
+      <PlanLocation
+        v-show="menuNumber === '2'"
+        :plan="plan"
+        :infoList="filteredLocationList"
+      />
+      <PlanLodging
+        v-show="menuNumber === '3'"
+        :infoList="filteredLodgingList"
+      />
+    </div>
+  </div>
+</template>
+
+<style scoped>
+.menu {
+  width: 200px;
+  height: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+</style>

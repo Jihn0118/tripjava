@@ -1,15 +1,14 @@
 <script setup>
-
-import {ref} from 'vue'
-import {useRouter} from "vue-router";
-import {useMemberStore} from "@/stores/member";
-import {storeToRefs} from "pinia";
+import { ref } from "vue";
+import { useRouter } from "vue-router";
+import { useMemberStore } from "@/stores/member";
+import { storeToRefs } from "pinia";
 
 const router = useRouter();
 
 const memberStore = useMemberStore();
-const {userInfo, isLogin} = storeToRefs(memberStore);
-const {userLogout} = memberStore;
+const { userInfo, isLogin } = storeToRefs(memberStore);
+const { userLogout } = memberStore;
 
 const logout = () => {
   clickEvent();
@@ -19,14 +18,14 @@ const logout = () => {
 };
 
 const toggleValue = ref({
-  "toggle": true,
-  "active": false
-})
+  toggle: true,
+  active: false,
+});
 
 const showcaseValue = ref({
-  "showcase": true,
-  "active": false
-})
+  showcase: true,
+  active: false,
+});
 
 const isOpen = ref(false);
 
@@ -40,19 +39,18 @@ const clickEvent = () => {
     showcaseValue.value.active = false;
     isOpen.value = !isOpen.value;
   }
-}
+};
 </script>
 
 <template>
-
-  <section :class=showcaseValue>
+  <section :class="showcaseValue">
     <header>
-      <router-link :to="{ name: 'home' }" style="text-decoration: none;">
+      <router-link :to="{ name: 'home' }" style="text-decoration: none">
         <h2 class="logo">Trip Java</h2>
       </router-link>
-      <div :class=toggleValue @click="clickEvent"></div>
+      <div :class="toggleValue" @click="clickEvent"></div>
     </header>
-    <router-view></router-view>
+    <router-view style="margin-top: 300px"></router-view>
   </section>
   <div class="menu">
     <ul>
@@ -63,7 +61,9 @@ const clickEvent = () => {
         <router-link :to="{ name: 'plan' }" @click="clickEvent"> Plan</router-link>
       </li>
       <li>
-        <router-link :to="{ name: 'information' }" @click="clickEvent"> Attraction Info</router-link>
+        <router-link :to="{ name: 'information' }" @click="clickEvent">
+          Attraction Info</router-link
+        >
       </li>
       <li>
         <router-link :to="{ name: 'user-mypage' }" @click="clickEvent">My Page</router-link>
@@ -76,18 +76,16 @@ const clickEvent = () => {
       </li>
     </ul>
   </div>
-
-
 </template>
 
 <style>
-@import url('https://fonts.googleapis.com/css?family=Poppins:200,300,400,500,600,700,800,900&display=swap');
+@import url("https://fonts.googleapis.com/css?family=Poppins:200,300,400,500,600,700,800,900&display=swap");
 
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
 }
 
 header {
@@ -135,7 +133,7 @@ header .logo {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #fff;;
+  background: #fff;
   transition: 0.5s;
   z-index: 2;
 }
@@ -163,7 +161,6 @@ header .logo {
   background: skyblue;
   mix-blend-mode: overlay;
 }
-
 
 .social {
   position: absolute;
@@ -233,5 +230,4 @@ header .logo {
     font-size: 2em;
   }
 }
-
 </style>

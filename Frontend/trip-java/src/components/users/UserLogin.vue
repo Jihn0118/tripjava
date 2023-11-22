@@ -1,15 +1,15 @@
 <script setup>
-import {ref} from "vue";
-import {storeToRefs} from "pinia";
-import {useRouter} from "vue-router";
-import {useMemberStore} from "@/stores/member";
+import { ref } from "vue";
+import { storeToRefs } from "pinia";
+import { useRouter } from "vue-router";
+import { useMemberStore } from "@/stores/member";
 
 const router = useRouter();
 
 const memberStore = useMemberStore();
 
-const {isLogin} = storeToRefs(memberStore);
-const {userLogin, getUserInfo} = memberStore;
+const { isLogin } = storeToRefs(memberStore);
+const { userLogin, getUserInfo } = memberStore;
 
 const loginUser = ref({
   memberId: "",
@@ -28,30 +28,22 @@ const login = async () => {
 
 const labelCol = {
   span: 100,
-}
+};
 
 const wrapperCol = {
-  span: 100
-}
+  span: 100,
+};
 </script>
 
 <template>
-
-  <a-form
-      :model="loginUser"
-      :label-col="labelCol"
-      :wrapper-col="wrapperCol"
-  >
+  <a-form :model="loginUser" :label-col="labelCol" :wrapper-col="wrapperCol">
     <a-form-item label="아이디" name="id">
-      <a-input v-model:value="loginUser.memberId"/>
+      <a-input v-model:value="loginUser.memberId" />
     </a-form-item>
 
     <!-- :rules="[{ required: true }]" -->
     <a-form-item label="비밀번호" name="password">
-      <a-input-password
-          v-model:value="loginUser.password"
-          @keyup.enter="login"
-      />
+      <a-input-password v-model:value="loginUser.password" @keyup.enter="login" />
     </a-form-item>
 
     <!-- <a-form-item name="remember" :wrapper-col="{ offset: 8, span: 16 }">
@@ -65,5 +57,4 @@ const wrapperCol = {
       </a-button>
     </a-form-item>
   </a-form>
-
 </template>
