@@ -195,39 +195,51 @@ const loadMarker = () => {
 </script>
 
 <template>
-  <div>
-    <h1>{{ Information.title }}</h1>
-    <h2>{{ Information.addr }}</h2>
-    <a-image
-        :width="700"
-        :src=Information.image
-    />
-    <h1>설명</h1>
-    <p>{{ Information.description }}</p>
-  </div>
-  <div class="map-wrap">
-    <div id="map"></div>
-  </div>
-  <button class="custom-button" @click="loveClick" :class="{ active: isLiked }">
-    <font-awesome-icon icon="heart" size="4x" :style="{ color: heartController.color }"/>
-  </button>
-  <h2>{{ totalHeartCount }}</h2>
 
-  <div>
-    <h1>댓글 화면</h1>
+  <div style="margin-top: 100px; text-align: center">
+    <h1 style="font-size: 30px; font-weight: bold ">{{ Information.title }}</h1>
+    <h4>{{ Information.addr }}</h4>
+    <div style="display: flex; align-items: center; justify-content: center; margin-top: 20px">
 
-    <div id="commentContainer">
-      <div v-for="comment in comments" :key="comment.commentId">
-        <strong>{{ comment.memberId }}</strong>: {{ comment.commentContent }}
-        <button @click="deleteComment(comment.commentId)">지우기</button>
+      <div style="width: 50%; text-align: center">
+        <div style="margin-bottom: 30px">
+          <a-image
+              :width="700"
+              :src=Information.image
+          />
+        </div>
+
+        <hr style="height: 2px; background-color: black">
+        <h1 style="margin: 30px">상세정보</h1>
+        <p>{{ Information.description }}</p>
+
+        <div class="map-wrap">
+          <div id="map"></div>
+        </div>
+        <button class="custom-button" @click="loveClick" :class="{ active: isLiked }">
+          <font-awesome-icon icon="heart" size="4x" :style="{ color: heartController.color }"/>
+        </button>
+        <h2>{{ totalHeartCount }}</h2>
+
+        <div>
+          <h1>댓글 화면</h1>
+
+          <div id="commentContainer">
+            <div v-for="comment in comments" :key="comment.commentId">
+              <strong>{{ comment.memberId }}</strong>: {{ comment.commentContent }}
+              <button @click="deleteComment(comment.commentId)">지우기</button>
+            </div>
+          </div>
+
+          <form @submit.prevent="submitComment">
+            <textarea v-model="content.commentContent" placeholder="댓글 내용"></textarea>
+            <button type="submit">댓글 작성</button>
+          </form>
+        </div>
       </div>
     </div>
-
-    <form @submit.prevent="submitComment">
-      <textarea v-model="content.commentContent" placeholder="댓글 내용"></textarea>
-      <button type="submit">댓글 작성</button>
-    </form>
   </div>
+
 
 </template>
 
@@ -239,7 +251,7 @@ const loadMarker = () => {
 }
 
 #map {
-  width: 60%;
+  width: 100%;
   height: 300px;
 }
 

@@ -1,6 +1,22 @@
 <script setup>
 
 import {ref} from 'vue'
+import { useRouter } from "vue-router";
+import { useMemberStore } from "@/stores/member";
+import { storeToRefs } from "pinia";
+
+const router = useRouter();
+
+const memberStore = useMemberStore();
+const { userInfo, isLogin } = storeToRefs(memberStore);
+const { userLogout } = memberStore;
+
+const logout = () => {
+  selectedKeys.value = [];
+  console.log("로그아웃!!!");
+  userLogout(userInfo.id);
+  router.push("/user/login");
+};
 
 const toggleValue = ref({
   "toggle": true,
@@ -24,8 +40,6 @@ const clickEvent = () => {
     showcaseValue.value.active = false;
     isOpen.value = !isOpen.value;
   }
-
-
 }
 </script>
 
@@ -53,7 +67,11 @@ const clickEvent = () => {
         <router-link :to="{ name: 'user-mypage' }" @click="clickEvent">My Page</router-link>
       </li>
       <li>
-        <router-link :to="{ name: 'user-login' }" @click="clickEvent">Log In</router-link>
+        <router-link v-if="isLogin" :to="{ name: 'user-login' }" @click="clickEvent">Log In</router-link>
+        <router-link v-if="!isLogin" to="/" @click.prevent="logout">Log Out</router-link>
+      </li>
+      <li>
+
       </li>
     </ul>
   </div>
@@ -84,28 +102,27 @@ header {
 }
 
 header .logo {
-  color: #fff;
+  color: skyblue;
   text-transform: uppercase;
   cursor: pointer;
+  font-size: 3em;
 }
 
 .toggle {
   position: relative;
   width: 60px;
   height: 60px;
-  background: url(https://i.ibb.co/HrfVRcx/menu.png);
+  background: url(../src/assets/menu.png);
   background-repeat: no-repeat;
   background-size: 30px;
   background-position: center;
-  cursor: pointer;
 }
 
 .toggle.active {
-  background: url(https://i.ibb.co/rt3HybH/close.png);
+  background: url(../src/assets/x.png);
   background-repeat: no-repeat;
   background-size: 25px;
   background-position: center;
-  cursor: pointer;
 }
 
 .showcase {
@@ -117,7 +134,7 @@ header .logo {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: LightSkyBlue;
+  background: #fff;;
   transition: 0.5s;
   z-index: 2;
 }
@@ -146,52 +163,10 @@ header .logo {
   mix-blend-mode: overlay;
 }
 
-.text {
-  position: relative;
-  z-index: 10;
-}
 
-.text h2 {
-  font-size: 5em;
-  font-weight: 800;
-  color: #fff;
-  line-height: 1em;
-  text-transform: uppercase;
-}
 
-.text h3 {
-  font-size: 4em;
-  font-weight: 700;
-  color: #fff;
-  line-height: 1em;
-  text-transform: uppercase;
-}
 
-.text p {
-  font-size: 1.1em;
-  color: #fff;
-  margin: 20px 0;
-  font-weight: 400;
-  max-width: 700px;
-}
 
-.text a {
-  display: inline-block;
-  font-size: 1em;
-  background: #fff;
-  padding: 10px 30px;
-  text-transform: uppercase;
-  text-decoration: none;
-  font-weight: 500;
-  margin-top: 10px;
-  color: #111;
-  letter-spacing: 2px;
-  transition: 0.2s;
-}
-
-.text a:hover {
-  letter-spacing: 6px;
-}
 
 .social {
   position: absolute;

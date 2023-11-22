@@ -12,15 +12,31 @@ const sidoCilckEvent = (selectItem) => {
 </script>
 
 <template>
-    <div class="overlay"></div>
-
-
+  <div class="text" style="width: 100%; margin-top: 100px">
     <SidoNameList @sido-click-event="sidoCilckEvent"></SidoNameList>
-<!--    <InfoList :selectedSido="selectedSido"></InfoList>-->
+    <InfoList :selectedSido="selectedSido"></InfoList>
+  </div>
+
+
 
 </template>
 
 <style scoped>
+
+.info {
+  position: absolute;
+  right: 0;
+  width: 100%;
+  min-height: 100vh;
+  padding: 50px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: LightSkyBlue;
+  transition: 0.5s;
+  z-index: 2;
+}
+
 .box {
   width: 150px;
   height: 150px;

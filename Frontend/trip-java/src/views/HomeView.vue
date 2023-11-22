@@ -23,16 +23,69 @@
 
 <style scoped>
 
-#plane{
-  position:relative;
+.text a {
+  display: inline-block;
+  font-size: 1em;
+  background: lightblue;
+  padding: 10px 30px;
+  text-transform: uppercase;
+  text-decoration: none;
+  font-weight: 500;
+  margin-top: 10px;
+  color: #111;
+  letter-spacing: 2px;
+  transition: 0.2s;
+}
+
+.text a:hover {
+  letter-spacing: 5px;
+}
+
+#plane {
+  position: relative;
   animation: move 5s;
   width: 800px;
   animation-direction: alternate;
 }
 
 @keyframes move {
-  0%   {top: 150px; left: -200px;}
-  100% {top: 0px; left: 0px;}
+  from {
+    top: 70px;
+    left: -400px;
+  }
+  to {
+    top: 0px;
+    left: 0px;
+  }
+}
+
+.text {
+  position: relative;
+  z-index: 10;
+}
+
+.text h2 {
+  font-size: 5em;
+  font-weight: 800;
+  color: lightblue;
+  line-height: 1em;
+  text-transform: uppercase;
+}
+
+.text h3 {
+  font-size: 4em;
+  font-weight: 700;
+  color: lightblue;
+  line-height: 1em;
+  text-transform: uppercase;
+}
+
+.text p {
+  font-size: 1.1em;
+  color: lightblue;
+  margin: 20px 0;
+  font-weight: 400;
+  max-width: 700px;
 }
 
 </style>

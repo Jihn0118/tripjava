@@ -2,6 +2,7 @@ package site.tripjava.tripjava.heart.model.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import site.tripjava.tripjava.heart.model.BoardAndMember;
 import site.tripjava.tripjava.heart.model.HeartRequest;
 import site.tripjava.tripjava.heart.model.mapper.HeartMapper;
@@ -30,12 +31,16 @@ public class HeartServiceImpl implements HeartService {
     }
 
     @Override
+    @Transactional
     public void doHeart(HeartRequest heartRequest) throws SQLException {
         heartMapper.doHeart(heartRequest);
+        heartMapper.upHeart(heartRequest.getContentId());
     }
 
     @Override
+    @Transactional
     public void cancelHeart(HeartRequest heartRequest) throws SQLException {
         heartMapper.cancelHeart(heartRequest);
+        heartMapper.downHeart(heartRequest.getContentId());
     }
 }

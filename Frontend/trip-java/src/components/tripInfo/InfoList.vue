@@ -1,8 +1,7 @@
 <script setup>
-import {onMounted, ref, watch} from 'vue';
+import {computed, onMounted, ref, watch} from 'vue';
 import {listInfo} from "@/api/attractionInfo";
 import InfoListItem from "@/components/tripInfo/InfoListItem.vue";
-
 
 
 const props = defineProps({
@@ -30,10 +29,9 @@ const Cities = {
 }
 
 
-watch(()=>props.selectedSido,(value) =>{
-    console.log(value+"가 들어왔다")
-    searchCondition.value.sidoCode = value;
-    getInfoList();
+watch(() => props.selectedSido, (value) => {
+  searchCondition.value.sidoCode = value;
+  getInfoList();
 })
 
 const infoList = ref([])
@@ -46,8 +44,8 @@ const getInfoList = () => {
   listInfo(
       searchCondition.value,
       ({data}) => {
-        infoList.value = data;
-        console.log(infoList.value);
+        dataList.value = data;
+        console.log(dataList.value);
       },
       (err) => {
         console.log(err);
@@ -55,27 +53,49 @@ const getInfoList = () => {
   )
 }
 
+
+//page
+const current = ref(1);
+const totalData = ref(120);
+const pageSize = ref(12);
+const dataList = ref([]);
+
+const displayData = computed(() => {
+  const startIndex = (current.value - 1) * pageSize.value;
+  const endIndex = current.value * pageSize.value;
+  return dataList.value.slice(startIndex, endIndex);
+})
+
+
 onMounted(() => {
   getInfoList();
   console.log(infoList.value);
 })
 
+
 </script>
 
-<template >
-  <div class="cardWrapper">
-    <InfoListItem v-for="item in infoList" :item="item"></InfoListItem>
+<template>
+  <div class="cardWrapper" style="margin-top: 30px">
+    <InfoListItem v-for="item in displayData" :item="item"></InfoListItem>
+  </div>
+  <div style="text-align: center; height: 50px">
+    <a-pagination v-model:current="current"
+                  :total=totalData
+                  :current=current
+                  :page-size=pageSize
+                  show-less-items
+                  style="height: 50px"/>
   </div>
 </template>
 
 <style scoped>
-  .cardWrapper{
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-
-    padding:20px;
-    display: grid;
-    gap:2rem;
-    row-gap: 150px;
-    text-align: center;
-  }
+.cardWrapper {
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  padding: 20px;
+  display: grid;
+  gap: 1rem;
+  row-gap: 50px;
+  text-align: center;
+}
 </style>
