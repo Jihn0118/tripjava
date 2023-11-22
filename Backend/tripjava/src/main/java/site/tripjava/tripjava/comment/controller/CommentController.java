@@ -19,20 +19,17 @@ public class CommentController {
 
     @GetMapping("/{contentId}")
     public ResponseEntity<List<Comment>> getCommentList(@PathVariable int contentId) throws SQLException {
-        System.out.println("리스트 가지러 왔습니다");
         return ResponseEntity.ok(commentService.getCommentList(contentId));
     }
 
     @PostMapping
     public ResponseEntity<Void> enrollComment(@RequestBody Comment comment) throws SQLException {
-        System.out.println("등록하러 왔습니다");
         commentService.enrollComment(comment);
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{commentId}")
     public ResponseEntity<Void> deleteComment(@PathVariable int commentId) throws SQLException {
-        System.out.println("지우러 왔습니다");
         commentService.deleteComment(commentId);
         return ResponseEntity.ok().build();
     }

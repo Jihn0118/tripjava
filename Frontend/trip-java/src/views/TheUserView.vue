@@ -1,8 +1,14 @@
-<script setup></script>
+<script setup>
+</script>
 
 <template>
-  유저 서비스
-  <router-view></router-view>
+
+    <div class="text" style="width: 100%; margin-top: 100px; display: flex; justify-content: center">
+      <div style="width: 40%">
+      <router-view></router-view>
+      </div>
+    </div>
+
 </template>
 
 <style scoped></style>

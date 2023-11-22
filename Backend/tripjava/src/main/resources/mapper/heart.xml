@@ -26,4 +26,15 @@
         where member_id = #{memberId} and content_id = #{contentId}
     </delete>
 
+    <update id="upHeart" parameterType="int">
+        update attraction_info
+        set love = love + 1
+        where content_id = #{contentId}
+    </update>
+
+    <update id="downHeart" parameterType="int">
+        update attraction_info
+        set love = love - 1
+        where content_id = #{contentId}
+    </update>
 </mapper>
