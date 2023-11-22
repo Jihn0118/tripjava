@@ -1,10 +1,6 @@
 <script setup>
 import { h, ref, onMounted } from "vue";
-import {
-  HomeOutlined,
-  CalendarOutlined,
-  AimOutlined,
-} from "@ant-design/icons-vue";
+import { HomeOutlined, CalendarOutlined, AimOutlined } from "@ant-design/icons-vue";
 
 import { message } from "ant-design-vue";
 
@@ -73,13 +69,14 @@ const plan = ref({
     // {
     //   day: Number,
     //   attractions: Array,
-    //   lodging: Object,
+    //
     // },
     // [
     //   {
     //     attractions: [
     //       {
     //         contentId: Number,
+    //          sequence: Number,   // 방문하는 순서 (일차 아님)
     //         title: String,
     //         image: String,
     //         latitude: Number,
@@ -115,15 +112,9 @@ const getInfoList = () => {
       infoList.value = data;
       for (let i = 0; i < infoList.value.length; i++) {
         if (infoList.value[i].contentTypeId == 32) {
-          filteredLodgingList.value = [
-            ...filteredLodgingList.value,
-            infoList.value[i],
-          ];
+          filteredLodgingList.value = [...filteredLodgingList.value, infoList.value[i]];
         } else {
-          filteredLocationList.value = [
-            ...filteredLocationList.value,
-            infoList.value[i],
-          ];
+          filteredLocationList.value = [...filteredLocationList.value, infoList.value[i]];
         }
       }
     },
@@ -145,34 +136,26 @@ const searchCondition = ref({
 </script>
 
 <template>
-  <div style="display: flex; flex-direction: row">
-    <div style="height: 700px">
-      <a-menu
-        v-model:openKeys="openKeys"
-        v-model:selectedKeys="selectedKeys"
-        class="menu"
-        mode="vertical"
-        :items="items"
-        @click="handleClick"
-      />
-      <a-button type="primary">일정 저장</a-button>
-    </div>
-    <div>
-      <!--자식 컴포넌트들 넣고 props emits으로 메뉴 부모한테 보내고 메뉴 부모에서 버튼 누르면 모든 여행 계획 데이터가 저장-->
-      <PlanCalendar
-        v-show="menuNumber === '1'"
-        :plan="plan"
-        @set-tripdate="setTripdate"
-      />
-      <PlanLocation
-        v-show="menuNumber === '2'"
-        :plan="plan"
-        :infoList="filteredLocationList"
-      />
-      <PlanLodging
-        v-show="menuNumber === '3'"
-        :infoList="filteredLodgingList"
-      />
+  <div style="margin-top: 100px">
+    <div style="display: flex; flex-direction: row; background-color: red">
+      <div>
+        <a-menu
+          v-model:openKeys="openKeys"
+          v-model:selectedKeys="selectedKeys"
+          class="menu"
+          mode="vertical"
+          :items="items"
+          @click="handleClick"
+        />
+        <a-button type="primary">일정 저장</a-button>
+      </div>
+
+      <div>
+        <!--자식 컴포넌트들 넣고 props emits으로 메뉴 부모한테 보내고 메뉴 부모에서 버튼 누르면 모든 여행 계획 데이터가 저장-->
+        <PlanCalendar v-show="menuNumber === '1'" :plan="plan" @set-tripdate="setTripdate" />
+        <PlanLocation v-show="menuNumber === '2'" :plan="plan" :infoList="filteredLocationList" />
+        <PlanLodging v-show="menuNumber === '3'" :infoList="filteredLodgingList" />
+      </div>
     </div>
   </div>
 </template>

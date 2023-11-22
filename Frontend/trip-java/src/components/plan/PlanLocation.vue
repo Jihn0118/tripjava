@@ -39,55 +39,10 @@ const onSearch = (searchValue) => {
   //console.log("or use this.value", value.value);
 };
 
-const activeKey = ref("2");
+const activeKey = ref("1");
 
 // O일차에 관광지 데이터가 있는 지 체크하는 변수
 const checkAttractions = ref([]);
-
-// 관광지 담기
-const select = (plan) => {
-  console.log("모달 확인");
-  console.log("item in select : ");
-  console.log(itemToAdd.value);
-  console.log(selectValue.value); //2일차일땐 2
-
-  // 기존에 2일차에 데이터가 하나도 없으면 객체 생성
-  if (checkAttractions.value[selectValue.value - 1] == false) {
-    let attraction = [];
-    attraction.push(itemToAdd.value);
-
-    // console.log("attraction: ");
-    // console.log(attraction);
-
-    // console.log("plan: ");
-    // console.log(plan);
-
-    // console.log("plan.days에 추가하기 전");
-    // console.log(plan.days);
-
-    //console.log("plan.days에 추가한 후");
-    plan.days.push({
-      day: selectValue.value,
-      attractions: attraction,
-      lodging: null,
-    });
-    console.log(plan.days);
-
-    checkAttractions.value[selectValue.value - 1] = true;
-  } else {
-    // 기존에 2일차에 데이터가 있으면 관광지 추가
-    for (let i = 0; i < plan.days.length; i++) {
-      if (plan.days[i].day == selectValue.value) {
-        console.log("기존에 " + plan.days[i].day + "일차에 데이터 있음");
-        plan.days[i].attractions.push(itemToAdd.value);
-      }
-    }
-  }
-
-  console.log("--- 담은 결과: plan ----");
-  console.log(plan);
-  modalVisible.value = false;
-};
 
 const modalVisible = ref(false);
 
@@ -105,13 +60,7 @@ const filterOption = (input, option) => {
 const selectValue = ref(undefined);
 
 // 모달 만든 적 없으면 select 옵션 만들고 모달 띄우기
-const modalParams = ref({});
-
 const openModal = (plan, item) => {
-  console.log("plan in openModal : ");
-  console.log(plan);
-  console.log("item in openModal : ");
-  console.log(item);
   if (!setModal.value) {
     for (let i = 1; i <= plan.dateDiff; i++) {
       options.value.push({ value: i, label: i + "일차" });
@@ -119,14 +68,106 @@ const openModal = (plan, item) => {
     }
     setModal.value = true;
   }
-  console.log(options.value);
+
   itemToAdd.value = item;
   console.log("itemToAdd in openModal");
   console.log(itemToAdd);
   modalVisible.value = true;
 };
 
+// 선택된 관광지 데이터
 const itemToAdd = ref({});
+
+const stations = ref([
+  {
+    day: Number,
+    latitude: String,
+    longitude: String,
+  },
+]);
+
+// 관광지 담기
+const select = (plan) => {
+  // 마커 정보 배열에 정보 추가
+  stations.value.push({
+    day: selectValue.value,
+    latitude: itemToAdd.value.latitude,
+    longitude: itemToAdd.value.longitude,
+  });
+
+  console.log("관광지 카카오에 담기");
+  console.log(stations.value);
+
+  // O일차에 기존에 데이터가 하나도 없으면 객체 생성
+  if (checkAttractions.value[selectValue.value - 1] == false) {
+    let attraction = [];
+
+    itemToAdd.value["sequence"] = 1;
+
+    attraction.push(itemToAdd.value);
+
+    plan.days.push({
+      day: selectValue.value,
+      attractions: attraction,
+      lodging: null,
+    });
+
+    console.log(plan.days);
+
+    checkAttractions.value[selectValue.value - 1] = true;
+  } else {
+    // O일차에 기존에 데이터가 있으면 관광지 추가
+    for (let i = 0; i < plan.days.length; i++) {
+      if (plan.days[i].day == selectValue.value) {
+        itemToAdd.value["sequence"] = plan.days[i].attractions.length + 1; // 몇 개 있는 지
+        console.log("기존에 " + plan.days[i].day + "일차에 데이터 있음");
+        plan.days[i].attractions.push(itemToAdd.value);
+      }
+    }
+  }
+
+  console.log("--- 담은 결과: plan ----");
+  console.log(plan);
+  modalVisible.value = false;
+};
+
+// 중간에 리스트에서 빼기 버튼 눌렀을 때,
+//마커 배열에서도 빼줘야하고,
+// plan에서도 빼줘야함
+
+const extractPlan = (attraction, plan, day) => {
+  console.log("추출버튼: ");
+  // 계획에서 빼주기
+  console.log("plan 하나 빼기 전");
+  console.log(plan);
+
+  plan.days.forEach((item) => {
+    if (item.day === day) {
+      item.attractions.forEach((target, index) => {
+        if (target.latitude == attraction.latitude && target.longitude == attraction.longitude) {
+          item.attractions.splice(index, 1);
+          console.log("plan에서 하나 빼기");
+          console.log(plan);
+        }
+      });
+    }
+  });
+
+  console.log("카카오 하나 빼기 전");
+  console.log(stations.value);
+
+  stations.value.forEach((item, index) => {
+    if (
+      item.day === day &&
+      item.latitude == attraction.latitude &&
+      item.longitude == attraction.longitude
+    ) {
+      stations.value.splice(index, 1);
+      console.log("카카오 마커 배열에서 하나 빼기");
+      console.log(stations.value);
+    }
+  });
+};
 </script>
 
 <template>
@@ -199,20 +240,27 @@ const itemToAdd = ref({});
       </h3>
       <div class="card-container">
         <a-tabs v-model:activeKey="activeKey" type="card">
-          <a-tab-pane v-for="(item, index) in plan.dateDiff" :key="index" :tab="`${index + 1}일차`">
+          <a-tab-pane
+            v-for="(item, index) in plan.dateDiff"
+            :key="index + 1"
+            :tab="`${index + 1}일차`"
+          >
             <p>{{ index + 1 }} 일차</p>
             <div v-for="planDay in plan.days">
               <div v-show="planDay.day == index + 1">
                 <div
-                  v-for="(attraction, index) in planDay.attractions"
+                  v-for="attraction in planDay.attractions"
                   :key="attraction.contentId"
                   style="margin-top: 10px"
                 >
-                  <div>{{ index }} 번</div>
+                  <div>{{ attraction.sequence }} 번</div>
                   <div>{{ attraction.contentId }}</div>
                   <div>{{ attraction.title }}</div>
                   <div>{{ attraction.latitude }}</div>
                   <div>{{ attraction.longitude }}</div>
+                  <a-button type="primary" danger @click="extractPlan(attraction, plan, index + 1)"
+                    >빼기</a-button
+                  >
                 </div>
               </div>
             </div>

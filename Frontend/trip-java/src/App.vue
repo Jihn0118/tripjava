@@ -50,7 +50,7 @@ const clickEvent = () => {
       </router-link>
       <div :class="toggleValue" @click="clickEvent"></div>
     </header>
-    <router-view style="margin-top: 300px"></router-view>
+    <router-view></router-view>
   </section>
   <div class="menu">
     <ul>
