@@ -17,6 +17,7 @@
     "ant-design-vue": "^4.0.7",
     "axios": "^1.6.2",
     "cors": "^2.8.5",
+    "dayjs": "^1.11.10",
     "jwt-decode": "^4.0.0",
     "pinia": "^2.1.7",
     "pinia-persistedstate": "^0.1.2",

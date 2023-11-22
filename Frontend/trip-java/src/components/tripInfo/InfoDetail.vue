@@ -7,6 +7,10 @@ import {getHeartStatement, doHeart, cancelHeart, getTotalHeartCount} from "@/api
 import {useMemberStore} from "@/stores/member";
 import {storeToRefs} from "pinia";
 import {listComment, enrollComment, deleteCommentById} from "@/api/comment";
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+
+dayjs.extend(relativeTime);
 
 
 const memberStore = useMemberStore();
@@ -46,6 +50,7 @@ const getListComment = () => {
       infoId,
       ({data}) => {
         comments.value = data;
+        console.log(data);
       },
       (error) => {
         console.error(error);
@@ -213,7 +218,7 @@ const loadMarker = () => {
         <h1 style="margin: 30px">상세정보</h1>
         <p>{{ Information.description }}</p>
 
-        <div class="map-wrap">
+        <div class="map-wrap" style="margin-bottom: 20px">
           <div id="map"></div>
         </div>
         <button class="custom-button" @click="loveClick" :class="{ active: isLiked }">
@@ -221,20 +226,49 @@ const loadMarker = () => {
         </button>
         <h2>{{ totalHeartCount }}</h2>
 
-        <div>
-          <h1>댓글 화면</h1>
-
-          <div id="commentContainer">
-            <div v-for="comment in comments" :key="comment.commentId">
-              <strong>{{ comment.memberId }}</strong>: {{ comment.commentContent }}
-              <button @click="deleteComment(comment.commentId)">지우기</button>
-            </div>
+        <div style="align-items: center">
+          <div style="text-align: left">
+            <h1>여행톡</h1>
           </div>
 
-          <form @submit.prevent="submitComment">
-            <textarea v-model="content.commentContent" placeholder="댓글 내용"></textarea>
-            <button type="submit">댓글 작성</button>
+          <form @submit.prevent="submitComment" style="margin-top: 20px; height: 40%">
+            <textarea v-model="content.commentContent" placeholder="댓글 내용"
+                      style="
+              width: 100%;
+              height: 100px;
+              padding: 10px;
+              box-sizing: border-box;
+              border: solid 2px;
+              border-radius: 5px;
+              font-size: 16px;
+              resize: both;
+                    "
+            ></textarea>
+            <div style="text-align: right; padding-right: 10px; margin-top: 5px">
+              <button type="submit" style="margin-bottom: 5px; font-size: 20px">댓글 작성</button>
+            </div>
           </form>
+          <a-comment v-for="comment in comments" :key="comment.commentId"
+                     style="border-bottom: 0.3px solid black; margin-bottom: 1px; ">
+            <template #author>{{ comment.memberId }}</template>
+            <template #avatar>
+              <a-avatar src="https://joeschmoe.io/api/v1/random" alt="Han Solo"/>
+            </template>
+            <template #content>
+              <div style="display: flex; justify-content: space-between ">
+                <p style="text-align: left">
+                  {{ comment.commentContent }}
+                </p>
+                <a-button v-if="comment.memberId == userInfo.memberId" @click="deleteComment(comment.commentId)" type="dashed">지우기</a-button>
+              </div>
+
+            </template>
+            <template #datetime>
+              <a-tooltip :title="dayjs().format('YYYY-MM-DD HH:mm:ss')">
+                <span>{{ dayjs().fromNow() }}</span>
+              </a-tooltip>
+            </template>
+          </a-comment>
         </div>
       </div>
     </div>

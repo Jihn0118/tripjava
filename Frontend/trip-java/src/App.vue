@@ -1,21 +1,21 @@
 <script setup>
 
 import {ref} from 'vue'
-import { useRouter } from "vue-router";
-import { useMemberStore } from "@/stores/member";
-import { storeToRefs } from "pinia";
+import {useRouter} from "vue-router";
+import {useMemberStore} from "@/stores/member";
+import {storeToRefs} from "pinia";
 
 const router = useRouter();
 
 const memberStore = useMemberStore();
-const { userInfo, isLogin } = storeToRefs(memberStore);
-const { userLogout } = memberStore;
+const {userInfo, isLogin} = storeToRefs(memberStore);
+const {userLogout} = memberStore;
 
 const logout = () => {
-  selectedKeys.value = [];
+  clickEvent();
   console.log("로그아웃!!!");
   userLogout(userInfo.id);
-  router.push("/user/login");
+  router.push("/");
 };
 
 const toggleValue = ref({
@@ -47,7 +47,9 @@ const clickEvent = () => {
 
   <section :class=showcaseValue>
     <header>
-      <h2 class="logo">Travel</h2>
+      <router-link :to="{ name: 'home' }" style="text-decoration: none;">
+        <h2 class="logo">Trip Java</h2>
+      </router-link>
       <div :class=toggleValue @click="clickEvent"></div>
     </header>
     <router-view></router-view>
@@ -66,12 +68,11 @@ const clickEvent = () => {
       <li>
         <router-link :to="{ name: 'user-mypage' }" @click="clickEvent">My Page</router-link>
       </li>
-      <li>
-        <router-link v-if="isLogin" :to="{ name: 'user-login' }" @click="clickEvent">Log In</router-link>
-        <router-link v-if="!isLogin" to="/" @click.prevent="logout">Log Out</router-link>
+      <li v-if="isLogin">
+        <router-link to="/" @click.prevent="logout">Log Out</router-link>
       </li>
-      <li>
-
+      <li v-else>
+        <router-link :to="{ name: 'user-login' }" @click="clickEvent">Log In</router-link>
       </li>
     </ul>
   </div>
@@ -162,10 +163,6 @@ header .logo {
   background: skyblue;
   mix-blend-mode: overlay;
 }
-
-
-
-
 
 
 .social {
