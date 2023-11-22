@@ -1,21 +1,19 @@
 <script setup>
-import { h, ref } from "vue";
+import { h, ref, onMounted } from "vue";
 import {
   HomeOutlined,
   CalendarOutlined,
   AimOutlined,
-  StarOutlined,
-  LikeOutlined,
-  MessageOutlined,
 } from "@ant-design/icons-vue";
-import { useRouter } from "vue-router";
-import dayjs from "dayjs";
 
-const dateFormat = "YYYY-MM-DD";
+import { message } from "ant-design-vue";
 
-const router = useRouter();
+import PlanLocation from "./PlanLocation.vue";
+import PlanCalendar from "./PlanCalendar.vue";
+import PlanLodging from "./PlanLodging.vue";
+import { listInfo } from "@/api/attractionInfo";
 
-const subPage = ref("1");
+const menuNumber = ref("1");
 
 const selectedKeys = ref([]);
 const openKeys = ref([]);
@@ -23,8 +21,8 @@ const items = ref([
   {
     key: "1",
     icon: () => h(CalendarOutlined),
-    label: "STEP 1 날짜 확인",
-    title: "STEP 1 날짜 확인",
+    label: "STEP 1 날짜 설정",
+    title: "STEP 1 날짜 설정",
   },
   {
     key: "2",
@@ -39,53 +37,111 @@ const items = ref([
     title: "STEP 3 숙소 설정",
   },
 ]);
+
 const handleClick = (menuInfo) => {
-  //router.replace("/plan/" + menuInfo.key);
-  console.log("click ", menuInfo.key);
+  menuNumber.value = menuInfo.key;
 };
 
+const emit = defineEmits(["setTripdate"]);
+
+const setTripdate = (val) => {
+  plan.title = val.title;
+  plan.startDate = val.startDate;
+  plan.endDate = val.endDate;
+  plan.dateDiff = val.dateDiff;
+
+  message.success("날짜가 성공적으로 저장되었습니다.");
+
+  // // 기존에 선택된 메뉴의 클래스를 제거
+  // items.value.forEach((item) => {
+  //   item.class = "ant-menu-item";
+  // });
+
+  menuNumber.value = "2";
+
+  // items.value[1].class = "ant-menu-item-selected";
+};
+
+// 여행 일정 객체
+// 제목, 여행 시작 날짜, 여행 종료 날짜, 몇 일 간의 여행인지
 const plan = ref({
   title: "",
-  date: Object,
+  startDate: "",
+  endDate: "",
+  dateDiff: 0,
+  days: [
+    // {
+    //   day: Number,
+    //   attractions: Array,
+    //   lodging: Object,
+    // },
+    // [
+    //   {
+    //     attractions: [
+    //       {
+    //         contentId: Number,
+    //         title: String,
+    //         image: String,
+    //         latitude: Number,
+    //         longitude: Number,
+    //         love: Number,
+    //         description: String,
+    //       },
+    //     ],
+    //     lodging: {
+    //       contentId: Number,
+    //       title: String,
+    //       image: String,
+    //       latitude: Number,
+    //       longitude: Number,
+    //       love: Number,
+    //       description: String,
+    //     },
+    //   },
+    // ],
+  ],
 });
 
-const zz = ref([dayjs("2023-11-13", dateFormat), dayjs("2023-11-15", dateFormat)]);
+// 관광지 정보
+const infoList = ref([]);
 
-const showDate = () => {
-  console.log(zz.value);
+const filteredLocationList = ref([]);
+const filteredLodgingList = ref([]);
+
+const getInfoList = () => {
+  listInfo(
+    searchCondition.value,
+    ({ data }) => {
+      infoList.value = data;
+      for (let i = 0; i < infoList.value.length; i++) {
+        if (infoList.value[i].contentTypeId == 32) {
+          filteredLodgingList.value = [
+            ...filteredLodgingList.value,
+            infoList.value[i],
+          ];
+        } else {
+          filteredLocationList.value = [
+            ...filteredLocationList.value,
+            infoList.value[i],
+          ];
+        }
+      }
+    },
+    (err) => {
+      console.log(err);
+    }
+  );
 };
 
-const listData = [];
-for (let i = 0; i < 23; i++) {
-  listData.push({
-    href: "https://www.antdv.com/",
-    title: `ant design vue part ${i}`,
-    avatar: "https://joeschmoe.io/api/v1/random",
-    description: "Ant Design, s refine.",
-    content: "We supply a seritotypes beautifully and efficiently.",
-  });
-}
-const pagination = {
-  onChange: (page) => {
-    console.log(page);
-  },
-  pageSize: 3,
-  style: "text-align: center;",
-};
-const actions = [
-  {
-    icon: StarOutlined,
-    text: "156",
-  },
-  {
-    icon: LikeOutlined,
-    text: "156",
-  },
-  {
-    icon: MessageOutlined,
-    text: "2",
-  },
-];
+onMounted(() => {
+  getInfoList();
+});
+
+const searchCondition = ref({
+  contentType: "",
+  keyword: "",
+  sidoCode: "",
+});
 </script>
 
 <template>
@@ -99,66 +155,28 @@ const actions = [
         :items="items"
         @click="handleClick"
       />
+      <a-button type="primary">일정 저장</a-button>
     </div>
-    <div style="height: 700px; background-color: white">
-      <!--이 자리에 넣어야 됨!!!-->
-      <div>
-        <a-input v-model:value="plan.title" size="large" placeholder="여행 제목 입력" />
-        <div>{{ plan.title }}</div>
-        <a-range-picker v-model:value="zz.value" :format="dateFormat" />
-        <div>{{ zz[0] }}</div>
-        <div>{{ zz[1] }}</div>
-        <a-button type="primary">시간 설정 완료</a-button>
-      </div>
+    <div>
+      <!--자식 컴포넌트들 넣고 props emits으로 메뉴 부모한테 보내고 메뉴 부모에서 버튼 누르면 모든 여행 계획 데이터가 저장-->
+      <PlanCalendar
+        v-show="menuNumber === '1'"
+        :plan="plan"
+        @set-tripdate="setTripdate"
+      />
+      <PlanLocation
+        v-show="menuNumber === '2'"
+        :plan="plan"
+        :infoList="filteredLocationList"
+      />
+      <PlanLodging
+        v-show="menuNumber === '3'"
+        :infoList="filteredLodgingList"
+      />
     </div>
   </div>
 </template>
 
-<!--날짜랑 제목 정하기-->
-<!-- <div>
-  <a-input v-model:value="plan.title" size="large" placeholder="여행 제목 입력" />
-  <a-range-picker v-model:value="zz.value" :format="dateFormat" />
-  <div>{{ zz[0] }}</div>
-  <div>{{ zz[1] }}</div>
-  <a-button type="primary">시간 설정 완료</a-button>
-</div> -->
-
-<!--관광지리스트 일정에 담기-->
-<!-- <a-list
-        item-layout="vertical"
-        size="small"
-        :pagination="pagination"
-        :data-source="listData"
-        style="text-align: center"
-      >
-        <template #renderItem="{ item }">
-          <a-list-item key="item.title">
-            <template #actions>
-              <span v-for="{ icon, text } in actions" :key="icon">
-                <component :is="icon" style="margin-right: 8px" />
-                {{ text }}
-              </span>
-            </template>
-            <template #extra>
-              <img
-                width="182"
-                alt="logo"
-                src="https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png"
-              />
-            </template>
-            <a-list-item-meta :description="item.description">
-              <template #title>
-                <a :href="item.href">{{ item.title }}</a>
-              </template>
-              <template #avatar><a-avatar :src="item.avatar" /></template>
-            </a-list-item-meta>
-            {{ item.content }}
-            <div>
-              <a-button type="primary">담기</a-button>
-            </div>
-          </a-list-item>
-        </template>
-      </a-list> -->
 <style scoped>
 .menu {
   width: 200px;

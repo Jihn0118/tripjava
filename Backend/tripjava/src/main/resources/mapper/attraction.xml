@@ -13,6 +13,7 @@
         <result column="longitude" property="longitude"></result>
         <result column="love" property="love"></result>
         <result column="overview" property="description"></result>
+        <result column="content_type_id" property="contentTypeId"></result>
     </resultMap>
 
     <resultMap id="sidoInfo" type="sido">
@@ -31,21 +32,20 @@
 
 -->
     <select id="searchAttraction" parameterType="searchCondition" resultMap="attractionInfo">
-        select content_id, title, addr1, first_image, latitude, longitude, love
+        select content_id, title, addr1, first_image, latitude, longitude, love, content_type_id
         from attraction_info
-        <where>
-            <if test="contentType != null and contentType != ''">
-                AND content_type_id = #{contentType}
-            </if>
-            <if test="keyword != null and keyword != ''">
-                AND title LIKE CONCAT(‘%’, #{keyword}, ‘%’)
-            </if>
-            <if test="sidoCode != null and sidoCode != ''">
-                AND sido_Code = #{sidoCode}
-            </if>
-        </where>
+        where first_image != ''
+        <if test="contentType != null and contentType != ''">
+            AND content_type_id = #{contentType}
+        </if>
+        <if test="keyword != null and keyword != ''">
+            AND title LIKE CONCAT(‘%’, #{keyword}, ‘%’)
+        </if>
+        <if test="sidoCode != null and sidoCode != ''">
+            AND sido_Code = #{sidoCode}
+        </if>
         order by love desc
-        limit 10
+        limit 1000
     </select>
 
     <select id="getSidoInfo"  resultMap="sidoInfo">

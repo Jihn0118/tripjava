@@ -28,5 +28,7 @@ public class AttractionInfo {
     private int love;
     //
     private String description;
+    // 컨텐츠 타입
+    private int contentTypeId;
 
 }
