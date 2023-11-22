@@ -1,12 +1,7 @@
 <script setup>
 import { ref } from "vue";
 
-import {
-  StarOutlined,
-  LikeOutlined,
-  MessageOutlined,
-  HeartFilled,
-} from "@ant-design/icons-vue";
+import { StarOutlined, LikeOutlined, MessageOutlined, HeartFilled } from "@ant-design/icons-vue";
 
 defineProps({
   plan: Object,
@@ -50,17 +45,16 @@ const activeKey = ref("2");
 const checkAttractions = ref([]);
 
 // 관광지 담기
-const select = (plan, item) => {
+const select = (plan) => {
   console.log("모달 확인");
-  console.log(item);
+  console.log("item in select : ");
+  console.log(itemToAdd.value);
   console.log(selectValue.value); //2일차일땐 2
-
-  let check = false;
 
   // 기존에 2일차에 데이터가 하나도 없으면 객체 생성
   if (checkAttractions.value[selectValue.value - 1] == false) {
     let attraction = [];
-    attraction.push(item);
+    attraction.push(itemToAdd.value);
 
     // console.log("attraction: ");
     // console.log(attraction);
@@ -111,29 +105,50 @@ const filterOption = (input, option) => {
 const selectValue = ref(undefined);
 
 // 모달 만든 적 없으면 select 옵션 만들고 모달 띄우기
-const openModal = (val) => {
-  console.log(val);
+const modalParams = ref({});
+
+const openModal = (plan, item) => {
+  console.log("plan in openModal : ");
+  console.log(plan);
+  console.log("item in openModal : ");
+  console.log(item);
   if (!setModal.value) {
-    for (let i = 1; i <= val.dateDiff; i++) {
+    for (let i = 1; i <= plan.dateDiff; i++) {
       options.value.push({ value: i, label: i + "일차" });
       checkAttractions.value[i - 1] = false; // O일차 데이터가 있는 지 확인하는 배열 객체 false로 초기화
     }
     setModal.value = true;
   }
   console.log(options.value);
+  itemToAdd.value = item;
+  console.log("itemToAdd in openModal");
+  console.log(itemToAdd);
   modalVisible.value = true;
 };
+
+const itemToAdd = ref({});
 </script>
 
 <template>
-  <div
-    style="
-      display: flex;
-      flex-direction: row;
-      height: 1000px;
-      background-color: white;
-    "
+  <a-modal
+    v-model:open="modalVisible"
+    title="이 항목을 며칠 차에 추가할까요?"
+    centered
+    :item="itemToAdd"
+    @ok="select(plan)"
   >
+    <!--모달창 안에 select창-->
+    <a-select
+      v-model:value="selectValue"
+      show-search
+      placeholder="Select a person"
+      style="width: 200px"
+      :options="options"
+      :filter-option="filterOption"
+      @change="handleChange"
+    ></a-select>
+  </a-modal>
+  <div style="display: flex; flex-direction: row; height: 1000px; background-color: white">
     <div style="width: 450px">
       <h1>장소 선택</h1>
       <a-input-search
@@ -142,14 +157,15 @@ const openModal = (val) => {
         enter-button
         @search="onSearch"
       />
+      <!-- a-list 시작 -->
       <a-list
         item-layout="vertical"
         :pagination="pagination"
         :data-source="infoList"
         style="text-align: center"
       >
-        <template #renderItem="{ item }" :key="item.contentId">
-          <a-list-item name="jinho">
+        <template #renderItem="{ item }">
+          <a-list-item :key="item.contentId">
             <!--아이콘 부분-->
             <template #actions>
               <span v-for="{ icon } in actions" :key="icon">
@@ -158,59 +174,32 @@ const openModal = (val) => {
               </span>
             </template>
             <template #extra>
-              <div
-                style="
-                  display: flex;
-                  flex-direction: column;
-                  align-items: center;
-                "
-              >
+              <div style="display: flex; flex-direction: column; align-items: center">
                 <img width="182" alt="no Image" :src="item.image" />
                 <a-button
                   type="primary"
                   style="width: 60px; margin-top: 5px"
-                  @click="openModal(plan)"
+                  @click="openModal(plan, item)"
                   >담기</a-button
                 >
-                <!--모달창-->
-                <a-modal
-                  v-model:open="modalVisible"
-                  title="이 항목을 며칠 차에 추가할까요?"
-                  centered
-                  @ok="select(plan, item)"
-                >
-                  <!--모달창 안에 select창-->
-                  <a-select
-                    v-model:value="selectValue"
-                    show-search
-                    placeholder="Select a person"
-                    style="width: 200px"
-                    :options="options"
-                    :filter-option="filterOption"
-                    @change="handleChange"
-                  ></a-select>
-                </a-modal>
               </div>
             </template>
             <h3>{{ item.title }}</h3>
             <div>{{ item.addr }}</div>
+            <!--모달창-->
           </a-list-item>
         </template>
       </a-list>
+      <!--a-list 끝-->
     </div>
 
     <div style="margin-left: 5px; min-width: 350px">
       <h3 v-show="plan.endDate != ''">
-        {{ plan.startDate }} ~ {{ plan.endDate }} ({{ plan.dateDiff - 1 }}박
-        {{ plan.dateDiff }}일)
+        {{ plan.startDate }} ~ {{ plan.endDate }} ({{ plan.dateDiff - 1 }}박 {{ plan.dateDiff }}일)
       </h3>
       <div class="card-container">
         <a-tabs v-model:activeKey="activeKey" type="card">
-          <a-tab-pane
-            v-for="(item, index) in plan.dateDiff"
-            :key="index"
-            :tab="`${index + 1}일차`"
-          >
+          <a-tab-pane v-for="(item, index) in plan.dateDiff" :key="index" :tab="`${index + 1}일차`">
             <p>{{ index + 1 }} 일차</p>
             <div v-for="planDay in plan.days">
               <div v-show="planDay.day == index + 1">
@@ -279,11 +268,7 @@ h1 {
 [data-theme="dark"] #components-tabs-demo-card-top .code-box-demo {
   background: #000;
 }
-[data-theme="dark"]
-  .card-container
-  > .ant-tabs-card
-  .ant-tabs-content
-  > .ant-tabs-tabpane {
+[data-theme="dark"] .card-container > .ant-tabs-card .ant-tabs-content > .ant-tabs-tabpane {
   background: #141414;
 }
 [data-theme="dark"] .card-container > .ant-tabs-card .ant-tabs-tab-active {

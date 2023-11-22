@@ -22,7 +22,7 @@ const logout = () => {
 
 <template>
   <a-layout-header>
-    <a-row>
+    <a-row >
       <a-col :flex="3">
         <a-menu
           v-model:selected-keys="selectedKeys"
@@ -79,26 +79,4 @@ const logout = () => {
 </template>
 
 <style scoped>
-.header-space-between {
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-}
-.ant-anchor-link {
-  width: 10px;
-}
-</style>
-<style>
-.ant-anchor-wrapper {
-  height: 30px;
-}
-
-.ant-anchor-wrapper::before {
-  border-bottom: none;
-}
-
-.ant-anchor-link {
-  height: 100%;
-  font-size: 20px;
-}
 </style>

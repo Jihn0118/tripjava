@@ -11,5 +11,5 @@ import lombok.ToString;
 @NoArgsConstructor
 public class HeartRequest {
     private String memberId;
-    private Long contentId;
+    private int contentId;
 }

@@ -13,26 +13,25 @@
         <result column="longitude" property="longitude"></result>
         <result column="love" property="love"></result>
         <result column="overview" property="description"></result>
-        <result column="content_type_id" property="contentTypeId"></result>
     </resultMap>
 
     <resultMap id="sidoInfo" type="sido">
         <result column="sido_code" property="sidoCode"></result>
         <result column="sido_name" property="sidoName"></result>
     </resultMap>
-<!--
-12 -> 관광지
-14 -> 관광지
-15 -> 축제정보
-25 -> 관광지
-28 -> 관광지
-32 -> 숙소 정보
-38 -> 관광지
-39 -> 식당 정보
+    <!--
+    12 -> 관광지
+    14 -> 관광지
+    15 -> 축제정보
+    25 -> 관광지
+    28 -> 관광지
+    32 -> 숙소 정보
+    38 -> 관광지
+    39 -> 식당 정보
 
--->
+    -->
     <select id="searchAttraction" parameterType="searchCondition" resultMap="attractionInfo">
-        select content_id, title, addr1, first_image, latitude, longitude, love, content_type_id
+        select content_id, title, addr1, first_image, latitude, longitude, love
         from attraction_info
         where first_image != ''
         <if test="contentType != null and contentType != ''">
@@ -45,7 +44,7 @@
             AND sido_Code = #{sidoCode}
         </if>
         order by love desc
-        limit 1000
+        limit 120
     </select>
 
     <select id="getSidoInfo"  resultMap="sidoInfo">
@@ -60,6 +59,5 @@
     </select>
 
 </mapper>
-
 
 
