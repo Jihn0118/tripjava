@@ -10,7 +10,7 @@ const props = defineProps({
   infoList: Array,
 });
 
-const emit = defineEmits(["setStations", "updateInfoList"]);
+const emit = defineEmits(["setStations", "updateInfoList","save"]);
 
 const setStations = function (val) {
   emit("setStations", val);
@@ -19,6 +19,11 @@ const setStations = function (val) {
 const updateInfoList = function (val) {
   emit("updateInfoList", val);
 };
+
+const click = () =>{
+  emit("save");
+}
+
 
 const pagination = {
   onChange: (page) => {
@@ -317,13 +322,17 @@ const extractPlan = (attraction, day) => {
       background-color: white;
     "
   >
-    <div style="width: 450px">
-      <h1>장소 선택</h1>
+    <div style="width: 400px">
+      <div style="display: flex; justify-content: space-between">
+        <h1>장소 선택</h1>
+        <a-button type="primary" @click="click">일정 저장</a-button>
+      </div>
+
       <!--관광지 타입 구분 select-->
       <a-select
         v-model:value="attractionSelectValue"
         placeholder="관광지 종류"
-        style="width: 200px"
+        style="width: 200px; margin-top: 10px"
         :options="attractionTypeOptions"
         :filter-option="filterOption"
         @change="handleChange"
@@ -386,7 +395,7 @@ const extractPlan = (attraction, day) => {
       <!--a-list 끝-->
     </div>
 
-    <div style="margin-left: 5px; min-width: 300px">
+    <div style="margin-left: 5px; min-width: 350px">
       <h3 v-show="props.plan.endDate != ''">
         {{ props.plan.startDate }} ~ {{ props.plan.endDate }} ({{
           props.plan.dateDiff - 1
@@ -401,39 +410,23 @@ const extractPlan = (attraction, day) => {
           >
             <p>{{ index + 1 }} 일차</p>
             <div v-for="planDay in props.plan.days">
-              <div
-                v-show="planDay.day == index + 1"
-                style="overflow-y: scroll; height: 700px"
-              >
+              <div v-show="planDay.day == index + 1">
                 <div
-                  v-for="attraction in planDay.attractions"
+                  v-for="(attraction, index2) in planDay.attractions"
                   :key="attraction.contentId"
-                  style="
-                    margin-top: 10px;
-                    display: flex;
-                    justify-content: center;
-                  "
+                  style="margin-top: 10px"
                 >
-                  <a-card hoverable style="width: 150px" size="small">
-                    <template #cover>
-                      <img alt="noImage" :src="attraction.image" />
-                    </template>
-                    <a-card-meta
-                      style="text-align: center"
-                      :title="attraction.title"
-                    >
-                      <template #description>{{ attraction.addr1 }}</template>
-                    </a-card-meta>
-
-                    <template #actions>
-                      <a-button
-                        type="primary"
-                        danger
-                        @click="extractPlan(attraction, index + 1)"
-                        >빼기</a-button
-                      >
-                    </template>
-                  </a-card>
+                  <div>{{ index2 + 1 }} 번</div>
+                  <div>{{ attraction.contentId }}</div>
+                  <div>{{ attraction.title }}</div>
+                  <div>{{ attraction.latitude }}</div>
+                  <div>{{ attraction.longitude }}</div>
+                  <a-button
+                    type="primary"
+                    danger
+                    @click="extractPlan(attraction, index + 1)"
+                    >빼기</a-button
+                  >
                 </div>
               </div>
             </div>

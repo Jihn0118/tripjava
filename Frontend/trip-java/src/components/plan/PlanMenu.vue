@@ -1,62 +1,54 @@
 <script setup>
-import { h, ref, onMounted } from "vue";
+import {h, ref, onMounted} from "vue";
 
-import { useRouter } from "vue-router";
+import {storeToRefs} from "pinia";
+import {useMemberStore} from "@/stores/member";
 
-import { storeToRefs } from "pinia";
-import { useMemberStore } from "@/stores/member";
-
-import { message } from "ant-design-vue";
-import { CalendarOutlined, AimOutlined } from "@ant-design/icons-vue";
+import {message} from "ant-design-vue";
+import {CalendarOutlined, AimOutlined} from "@ant-design/icons-vue";
 
 import PlanLocation from "./PlanLocation.vue";
 import PlanCalendar from "./PlanCalendar.vue";
 
 import VKakaoMap from "@/components/common/VKakaoMap.vue";
 
-import { listInfo } from "@/api/attractionInfo";
-import { registerTravelPlans } from "@/api/plan";
-
-const router = useRouter();
+import {listInfo} from "@/api/attractionInfo";
+import {registerTravelPlans} from "@/api/plan";
 
 const memberStore = useMemberStore();
 
-const { userInfo } = storeToRefs(memberStore);
+const {userInfo} = storeToRefs(memberStore);
 
-const menuNumber = ref("1");
+const menuNumber = ref(true);
 
+import {useRouter} from "vue-router";
+
+const router = useRouter();
 const selectedKeys = ref([]);
 const openKeys = ref([]);
 const items = ref([
   {
-    key: "1",
+    key: true,
     icon: () => h(CalendarOutlined),
     label: "STEP 1 날짜 설정",
     title: "STEP 1 날짜 설정",
   },
   {
-    key: "2",
+    key: false,
     icon: () => h(AimOutlined),
     label: "STEP 2 장소 선택",
     title: "STEP 2 장소 선택",
   },
 ]);
-
-const handleClick = (menuInfo) => {
-  menuNumber.value = menuInfo.key;
-};
-
-const emit = defineEmits(["setTripdate", "setStations", "updateInfoList"]);
-
-const setTripdate = (val) => {
-  plan.title = val.title;
-  plan.startDate = val.startDate;
-  plan.endDate = val.endDate;
-  plan.dateDiff = val.dateDiff;
+const createDate = (val) => {
+  plan.value.title = val.title;
+  plan.value.startDate = val.startDate;
+  plan.value.endDate = val.endDate;
+  plan.value.dateDiff = val.dateDiff;
 
   message.success("날짜가 성공적으로 저장되었습니다.");
 
-  menuNumber.value = "2";
+  menuNumber.value = !menuNumber.value;
 };
 
 // 카카오 마커 배열
@@ -65,8 +57,6 @@ const stations = ref([]);
 // 카카오 마커 배열 업데이트 함수
 const setStations = function (val) {
   stations.value = val;
-  console.log("부모");
-  console.log(stations.value);
 };
 
 // 여행 일정 객체
@@ -118,26 +108,26 @@ const filteredLodgingList = ref([]);
 
 const getInfoList = () => {
   listInfo(
-    searchCondition.value,
-    ({ data }) => {
-      infoList.value = data;
-      for (let i = 0; i < infoList.value.length; i++) {
-        if (infoList.value[i].contentTypeId == 32) {
-          filteredLodgingList.value = [
-            ...filteredLodgingList.value,
-            infoList.value[i],
-          ];
-        } else {
-          filteredLocationList.value = [
-            ...filteredLocationList.value,
-            infoList.value[i],
-          ];
+      searchCondition.value,
+      ({data}) => {
+        infoList.value = data;
+        for (let i = 0; i < infoList.value.length; i++) {
+          if (infoList.value[i].contentTypeId == 32) {
+            filteredLodgingList.value = [
+              ...filteredLodgingList.value,
+              infoList.value[i],
+            ];
+          } else {
+            filteredLocationList.value = [
+              ...filteredLocationList.value,
+              infoList.value[i],
+            ];
+          }
         }
+      },
+      (err) => {
+        console.log(err);
       }
-    },
-    (err) => {
-      console.log(err);
-    }
   );
 };
 
@@ -173,7 +163,7 @@ const savePlan = () => {
         contentId: attraction.contentId,
       });
     });
-    addDays.push({ dayNumber: dayNum, details: addToDetails }); // days 배열에 추가
+    addDays.push({dayNumber: dayNum, details: addToDetails}); // days 배열에 추가
   });
   let addPlan = {
     userId: userInfo.value.memberId,
@@ -184,43 +174,30 @@ const savePlan = () => {
   };
 
   registerTravelPlans(addPlan);
-
-  router.push("/user/mypage");
+  router.push({name: "user-mypage"})
 };
 </script>
 
 <template>
-  <div style="margin-top: 100px">
-    <div style="display: flex; flex-direction: row; background-color: red">
-      <div>
-        <a-menu
-          v-model:openKeys="openKeys"
-          v-model:selectedKeys="selectedKeys"
-          class="menu"
-          mode="vertical"
-          :items="items"
-          @click="handleClick"
-        />
-        <a-button type="primary" @click="savePlan">일정 저장</a-button>
-      </div>
 
-      <div>
-        <PlanCalendar
-          v-show="menuNumber === '1'"
-          :plan="plan"
-          @set-tripdate="setTripdate"
-        />
-        <PlanLocation
-          v-show="menuNumber === '2'"
+  <div style="margin-top: 100px;display: flex; width: 100%">
+    <div>
+      <PlanCalendar
+          v-if="menuNumber == true"
+          @set-tripdate="createDate"
+      />
+      <PlanLocation
+          v-else
           :plan="plan"
           :infoList="filteredLocationList"
           @set-stations="setStations"
           @updateInfoList="updateInfoList"
-        />
-      </div>
+          @save="savePlan"
+      />
     </div>
+    <VKakaoMap :stations="stations"/>
   </div>
-  <VKakaoMap :stations="stations" />
+
 </template>
 
 <style scoped>
