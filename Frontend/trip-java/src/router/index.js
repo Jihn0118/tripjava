@@ -43,27 +43,12 @@ const router = createRouter({
       name: "plan",
       beforeEnter: onlyAuthUser,
       component: Planview,
-      // children: [
-      //   {
-      //     path: "/1",
-      //     name: "plan-menu-calendar",
-      //     component: PlanCalendar,
-      //   },
-      //   {
-      //     path: "/2",
-      //     name: "plan-menu-location",
-      //     component: PlanLocation,
-      //   },{
-      //     path: "/3",
-      //     name: "plan-menu-calendar",
-      //     component: PlanLodging,
-      //   },
-      // ]
     },
     {
       path: "/plan/:travelId",
       name: "plan-detail",
       component: PlanDetails,
+      props: true,
     },
     {
       path: "/information",
