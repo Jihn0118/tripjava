@@ -10,7 +10,7 @@ public interface TravelPlanService {
 
     void registerTripPlan(TravelPlan travelPlan) throws SQLException;
 
-    List<TravelPlan> getTravelPlanList(Long id) throws SQLException;
+    List<TravelPlan> getTravelPlanList(String id) throws SQLException;
 
     List<Day> getTravelDetailPlan(Long travelId) throws SQLException;
 

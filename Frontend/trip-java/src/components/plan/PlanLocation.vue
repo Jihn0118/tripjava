@@ -1,23 +1,23 @@
 <script setup>
 import { ref } from "vue";
 import { message } from "ant-design-vue";
+import { listInfo } from "@/api/attractionInfo";
 
-import {
-  StarOutlined,
-  LikeOutlined,
-  MessageOutlined,
-  HeartFilled,
-} from "@ant-design/icons-vue";
+import { HeartFilled } from "@ant-design/icons-vue";
 
-defineProps({
+const props = defineProps({
   plan: Object,
   infoList: Array,
 });
 
-const emit = defineEmits(["setStations"]);
+const emit = defineEmits(["setStations", "updateInfoList"]);
 
 const setStations = function (val) {
   emit("setStations", val);
+};
+
+const updateInfoList = function (val) {
+  emit("updateInfoList", val);
 };
 
 const pagination = {
@@ -33,22 +33,26 @@ const actions = [
     icon: HeartFilled,
     text: "",
   },
-  // {
-  //   icon: LikeOutlined,
-  //   text: "156",
-  // },
-  // {
-  //   icon: MessageOutlined,
-  //   text: "2",
-  // },
 ];
 
 const keyword = ref("");
 
 // 키워드명으로 검색
-const onSearch = (searchValue) => {
-  console.log("검색", searchValue);
-  //console.log("or use this.value", value.value);
+const onSearch = () => {
+  const searchCondition = {
+    contentType: attractionSelectValue.value,
+    keyword: keyword.value,
+    sidoCode: sidoSelectValue.value,
+  };
+  listInfo(
+    searchCondition,
+    ({ data }) => {
+      updateInfoList(data);
+    },
+    (error) => {
+      console.log(error);
+    }
+  );
 };
 
 const activeKey = ref("1");
@@ -56,11 +60,98 @@ const activeKey = ref("1");
 // O일차에 관광지 데이터가 있는 지 체크하는 변수
 const checkAttractions = ref([]);
 
+// 모달 띄우는 상태 변수
 const modalVisible = ref(false);
 
 const setModal = ref(false);
 
+// O 일차 select option
 const options = ref([]);
+
+const attractionTypeOptions = [
+  { value: "12", label: "관광지" },
+  { value: "14", label: "문화시설" },
+  { value: "15", label: "축제공연행사" },
+  { value: "25", label: "여행코스" },
+  { value: "28", label: "레포츠" },
+  { value: "32", label: "숙박" },
+  { value: "38", label: "쇼핑" },
+  { value: "39", label: "음식점" },
+];
+
+const attractionSelectValue = ref(undefined);
+const sidoSelectValue = ref(undefined);
+
+const sidoCodeOptions = [
+  {
+    value: "1",
+    label: "서울",
+  },
+  {
+    value: "2",
+    label: "인천",
+  },
+  {
+    value: "3",
+    label: "대전",
+  },
+  {
+    value: "4",
+    label: "대구",
+  },
+  {
+    value: "5",
+    label: "광주",
+  },
+  {
+    value: "6",
+    label: "부산",
+  },
+  {
+    value: "7",
+    label: "울산",
+  },
+  {
+    value: "8",
+    label: "세종특별자치시",
+  },
+  {
+    value: "31",
+    label: "경기도",
+  },
+  {
+    value: "32",
+    label: "강원도",
+  },
+  {
+    value: "33",
+    label: "충청북도",
+  },
+  {
+    value: "34",
+    label: "충청남도",
+  },
+  {
+    value: "35",
+    label: "경상북도",
+  },
+  {
+    value: "36",
+    label: "경상남도",
+  },
+  {
+    value: "37",
+    label: "전라북도",
+  },
+  {
+    value: "38",
+    label: "전라남도",
+  },
+  {
+    value: "39",
+    label: "제주도",
+  },
+];
 
 const handleChange = (value) => {
   console.log(`selected ${value}`);
@@ -72,9 +163,9 @@ const filterOption = (input, option) => {
 const selectValue = ref(undefined);
 
 // 모달 만든 적 없으면 select 옵션 만들고 모달 띄우기
-const openModal = (plan, item) => {
+const openModal = (item) => {
   if (!setModal.value) {
-    for (let i = 1; i <= plan.dateDiff; i++) {
+    for (let i = 1; i <= props.plan.dateDiff; i++) {
       options.value.push({ value: i, label: i + "일차" });
       checkAttractions.value[i - 1] = false; // O일차 데이터가 있는 지 확인하는 배열 객체 false로 초기화
     }
@@ -93,7 +184,7 @@ const itemToAdd = ref({});
 const stations = ref([]);
 
 // 관광지 담기
-const select = (plan) => {
+const select = () => {
   // O일차에 기존에 데이터가 하나도 없으면 객체 생성
   if (checkAttractions.value[selectValue.value - 1] == false) {
     let attraction = [];
@@ -102,7 +193,7 @@ const select = (plan) => {
 
     attraction.push(itemToAdd.value);
 
-    plan.days.push({
+    props.plan.days.push({
       day: selectValue.value,
       attractions: attraction,
       lodging: null,
@@ -121,11 +212,12 @@ const select = (plan) => {
     // O일차에 기존에 데이터가 있으면 관광지 추가
 
     // O일차에 기존에 똑같은 관광지 데이터가 있으면 추가 못함
-    for (let i = 0; i < plan.days.length; i++) {
-      if (plan.days[i].day == selectValue.value) {
-        for (let j = 0; j < plan.days[i].attractions.length; j++) {
+    for (let i = 0; i < props.plan.days.length; i++) {
+      if (props.plan.days[i].day == selectValue.value) {
+        for (let j = 0; j < props.plan.days[i].attractions.length; j++) {
           if (
-            plan.days[i].attractions[j].contentId == itemToAdd.value.contentId
+            props.plan.days[i].attractions[j].contentId ==
+            itemToAdd.value.contentId
           ) {
             message.error(
               "이미 " +
@@ -143,10 +235,11 @@ const select = (plan) => {
 
     // 없으면 추가
     if (checkInPlan == false) {
-      for (let i = 0; i < plan.days.length; i++) {
-        if (plan.days[i].day == selectValue.value) {
-          itemToAdd.value["sequence"] = plan.days[i].attractions.length + 1; // 몇 개 있는 지
-          plan.days[i].attractions.push(itemToAdd.value);
+      for (let i = 0; i < props.plan.days.length; i++) {
+        if (props.plan.days[i].day == selectValue.value) {
+          itemToAdd.value["sequence"] =
+            props.plan.days[i].attractions.length + 1; // 몇 개 있는 지
+          props.plan.days[i].attractions.push(itemToAdd.value);
 
           // 마커 정보 배열에 정보 추가
           stations.value.push({
@@ -159,12 +252,6 @@ const select = (plan) => {
     }
   }
 
-  console.log("--- 담은 결과: plan ----");
-  console.log(plan);
-
-  console.log("--- 담은 결과: 카카오 마커(stations) ---");
-  console.log(stations.value);
-
   setStations(stations.value); // 카카오 마커 업데이트
 
   modalVisible.value = false;
@@ -174,9 +261,9 @@ const select = (plan) => {
 //마커 배열에서도 빼줘야하고,
 // plan에서도 빼줘야함
 
-const extractPlan = (attraction, plan, day) => {
+const extractPlan = (attraction, day) => {
   // 계획에서 빼주기
-  plan.days.forEach((item) => {
+  props.plan.days.forEach((item) => {
     if (item.day === day) {
       item.attractions.forEach((target, index) => {
         if (
@@ -199,12 +286,6 @@ const extractPlan = (attraction, plan, day) => {
     }
   });
 
-  console.log("--- 빼기 플랜---");
-  console.log(plan);
-
-  console.log("---뺴기 카카오마커(stations): ----");
-  console.log(stations.value);
-
   setStations(stations.value); // 카카오 마커 업데이트
 };
 </script>
@@ -215,13 +296,13 @@ const extractPlan = (attraction, plan, day) => {
     title="이 항목을 며칠 차에 추가할까요?"
     centered
     :item="itemToAdd"
-    @ok="select(plan)"
+    @ok="select()"
   >
     <!--모달창 안에 select창-->
     <a-select
       v-model:value="selectValue"
       show-search
-      placeholder="Select a person"
+      placeholder="O일차"
       style="width: 200px"
       :options="options"
       :filter-option="filterOption"
@@ -238,6 +319,26 @@ const extractPlan = (attraction, plan, day) => {
   >
     <div style="width: 450px">
       <h1>장소 선택</h1>
+      <!--관광지 타입 구분 select-->
+      <a-select
+        v-model:value="attractionSelectValue"
+        placeholder="관광지 종류"
+        style="width: 200px"
+        :options="attractionTypeOptions"
+        :filter-option="filterOption"
+        @change="handleChange"
+      ></a-select>
+
+      <!--시도 구분 select-->
+      <a-select
+        v-model:value="sidoSelectValue"
+        placeholder="지역 선택"
+        style="width: 200px"
+        :options="sidoCodeOptions"
+        :filter-option="filterOption"
+        @change="handleChange"
+      ></a-select>
+
       <a-input-search
         v-model:value="keyword"
         placeholder="장소명을 입력하세요."
@@ -248,7 +349,7 @@ const extractPlan = (attraction, plan, day) => {
       <a-list
         item-layout="vertical"
         :pagination="pagination"
-        :data-source="infoList"
+        :data-source="props.infoList"
         style="text-align: center"
       >
         <template #renderItem="{ item }">
@@ -270,9 +371,8 @@ const extractPlan = (attraction, plan, day) => {
               >
                 <img width="182" alt="no Image" :src="item.image" />
                 <a-button
-                  type="primary"
                   style="width: 60px; margin-top: 5px"
-                  @click="openModal(plan, item)"
+                  @click="openModal(item)"
                   >담기</a-button
                 >
               </div>
@@ -287,19 +387,20 @@ const extractPlan = (attraction, plan, day) => {
     </div>
 
     <div style="margin-left: 5px; min-width: 350px">
-      <h3 v-show="plan.endDate != ''">
-        {{ plan.startDate }} ~ {{ plan.endDate }} ({{ plan.dateDiff - 1 }}박
-        {{ plan.dateDiff }}일)
+      <h3 v-show="props.plan.endDate != ''">
+        {{ props.plan.startDate }} ~ {{ props.plan.endDate }} ({{
+          props.plan.dateDiff - 1
+        }}박 {{ props.plan.dateDiff }}일)
       </h3>
       <div class="card-container">
         <a-tabs v-model:activeKey="activeKey" type="card">
           <a-tab-pane
-            v-for="(item, index) in plan.dateDiff"
+            v-for="(item, index) in props.plan.dateDiff"
             :key="index + 1"
             :tab="`${index + 1}일차`"
           >
             <p>{{ index + 1 }} 일차</p>
-            <div v-for="planDay in plan.days">
+            <div v-for="planDay in props.plan.days">
               <div v-show="planDay.day == index + 1">
                 <div
                   v-for="(attraction, index2) in planDay.attractions"
@@ -314,7 +415,7 @@ const extractPlan = (attraction, plan, day) => {
                   <a-button
                     type="primary"
                     danger
-                    @click="extractPlan(attraction, plan, index + 1)"
+                    @click="extractPlan(attraction, index + 1)"
                     >빼기</a-button
                   >
                 </div>
