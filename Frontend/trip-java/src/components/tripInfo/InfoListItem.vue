@@ -1,24 +1,33 @@
 <script setup>
-import {watch} from "vue";
+import { watch } from "vue";
 
-const props = defineProps({item: Object})
-console.log(props.item.contendId);
+const props = defineProps({ item: Object });
 </script>
 
 <template>
   <div class="card-wrapper">
-    <router-link :to="{name:'information-detail' , params: { infoId: item.contendId }}" style="background-color: white">
-      <a-card hoverable style="width: 400px; height: 100%; display: flex; flex-direction: column">
+    <router-link
+      :to="{ name: 'information-detail', params: { infoId: item.contentId } }"
+      style="background-color: white"
+    >
+      <a-card
+        hoverable
+        style="
+          width: 400px;
+          height: 100%;
+          display: flex;
+          flex-direction: column;
+        "
+      >
         <template #cover class="img_wrapper">
           <div class="image-container">
-            <img alt="example" :src="item.image" class="image"/>
+            <img alt="example" :src="item.image" class="image" />
             <div class="text">
               <div style="margin-right: 10px">
                 <font-awesome-icon :icon="['fas', 'heart']" size="lg" />
                 {{ item.love }}
               </div>
             </div>
-
           </div>
         </template>
         <div class="card-content">
@@ -37,7 +46,6 @@ console.log(props.item.contendId);
 </template>
 
 <style scoped>
-
 .image-container {
   position: relative;
   height: 300px;
@@ -76,5 +84,4 @@ console.log(props.item.contendId);
 .image-container:hover .text {
   display: flex;
 }
-
 </style>
