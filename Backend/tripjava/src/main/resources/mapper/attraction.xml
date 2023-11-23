@@ -5,7 +5,7 @@
 <mapper namespace="site.tripjava.tripjava.attraction.model.mapper.AttractionMapper">
 
     <resultMap id="attractionInfo" type="attractionInfo">
-        <result column="content_id" property="contendId"></result>
+        <result column="content_id" property="contentId"></result>
         <result column="title" property="title"></result>
         <result column="addr1" property="addr"></result>
         <result column="first_image" property="image"></result>
