@@ -18,6 +18,12 @@ function infoDetail(infoId, success, fail) {
         .catch(fail);
 }
 
+function allContentFindById(param, success, fail) {
+    local.get("/attraction/attractions", {params: param})
+        .then(success)
+        .catch(fail);
+}
+
 export {
-    listSidoName, listInfo, infoDetail
+    listSidoName, listInfo, infoDetail, allContentFindById
 };

@@ -12,4 +12,7 @@ public interface AttractionMapper {
     Sido[] getSidoInfo() throws SQLException;
 
     AttractionInfo getDetailInfo(int contendId) throws SQLException;
+
+    List<AttractionInfo> getAllInfosFindById (List<Long> contentIdList) throws Exception;
+
 }

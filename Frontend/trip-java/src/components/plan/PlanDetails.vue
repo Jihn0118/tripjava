@@ -1,12 +1,14 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { getPlan } from "@/api/plan";
+import { allContentFindById } from "@/api/attractionInfo";
 import { useRoute } from "vue-router";
 
 const route = useRoute();
 
 const days = ref([]);
 const details = ref([]);
+const contentIdList2 = ref([]);
 
 const getPlanInfo = () => {
   getPlan(
@@ -20,12 +22,15 @@ const getPlanInfo = () => {
         let detail = element.details;
         detail.forEach((det) => {
           details.value.push(det.contentId);
+          contentIdList2.value.push(det.contentId);
         });
         days.value.push({ dayNumber: dayNum, details: details.value });
       });
 
       console.log("데이터 가공");
       console.log(days.value);
+      console.log("콘텐트아이디 리스트");
+      //console.log(contentIdList.value);
       //details.value.push();
       //days.value.push();
     },
@@ -33,6 +38,17 @@ const getPlanInfo = () => {
       console.log(error);
     }
   );
+  getContent();
+};
+
+const getContent = () => {
+  console.log("제발");
+  let contentIdList = contentIdList2.value;
+  console.log(contentIdList);
+  allContentFindById(contentIdList, ({ data }) => {
+    console.log("content 가져오기");
+    console.log(data);
+  });
 };
 
 onMounted(() => {

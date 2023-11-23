@@ -30,6 +30,17 @@
     39 -> 식당 정보
 
     -->
+    <resultMap id="shortInfo" type="AttractionShortInfo">
+        <constructor>
+            <idArg column="content_id" javaType="Long"/>
+            <arg column="title" javaType="String"/>
+            <arg column="addr1" javaType="String"/>
+            <arg column="first_image" javaType="String"/>
+        </constructor>
+    </resultMap>
+
+
+
     <select id="searchAttraction" parameterType="searchCondition" resultMap="attractionInfo">
         select content_id, title, addr1, first_image, latitude, longitude, love
         from attraction_info
@@ -78,4 +89,12 @@
         where i.content_id = d.content_id and i.content_id = #{content_id};
     </select>
 
+    <select id="getAllInfosFindById" resultMap="shortInfo">
+        SELECT content_id, title, addr1, first_image
+        FROM your_table_name
+        WHERE content_id IN
+        <foreach item="contentId" collection="contentIdList" open="(" separator="," close=")">
+            #{contentId}
+        </foreach>
+    </select>
 </mapper>
