@@ -65,7 +65,7 @@ const clickEvent = () => {
           Attraction Info</router-link
         >
       </li>
-      <li>
+      <li v-if="isLogin">
         <router-link :to="{ name: 'user-mypage' }" @click="clickEvent">My Page</router-link>
       </li>
       <li v-if="isLogin">
