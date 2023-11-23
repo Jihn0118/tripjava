@@ -104,8 +104,7 @@ const createImage = (day) => {
 const createLine = () => {
   for (var i = 0; i < lines.value.length; i++) {
     var value = lines.value[i];
-    console.log("밑에 확인")
-    console.log(value);
+
     var polyline = new kakao.maps.Polyline({
       path: lines.value[i], // 선을 구성하는 좌표배열 입니다
       strokeWeight: 2, // 선의 두께 입니다
@@ -123,17 +122,22 @@ const loadMarkers = () => {
       deleteLines();
       deleteMarkers();
       lines.value = [];
+
       for (var i = 0; i < totalDay.value; i++) {
         lines.value.push([]);
       }
-
-
       // 마커를 생성합니다
       markers.value = [];
+
+
+
+
+
       positions.value.forEach((position) => {
-        console.log(position)
+
         lines.value[position.day - 1].push(position.latlng)
-        console.log(lines.value)
+
+
         const marker = new kakao.maps.Marker({
           map: map, // 마커를 표시할 지도
           position: position.latlng, // 마커를 표시할 위치

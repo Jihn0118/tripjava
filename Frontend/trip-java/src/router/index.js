@@ -3,9 +3,7 @@ import HomeView from "../views/HomeView.vue";
 import LoginRedirectView from "../views/LoginRedirectView.vue";
 import Planview from "@/views/PlanView.vue";
 import InformationView from "@/views/InformationView.vue";
-import PlanCalendar from "@/components/plan/PlanCalendar.vue";
-import PlanLocation from "@/components/plan/PlanLocation.vue";
-import PlanLodging from "@/components/plan/PlanLodging.vue";
+import PlanDetails from "@/components/plan/PlanDetails.vue";
 
 import { storeToRefs } from "pinia";
 import { useMemberStore } from "@/stores/member";
@@ -61,6 +59,11 @@ const router = createRouter({
       //     component: PlanLodging,
       //   },
       // ]
+    },
+    {
+      path: "/plan/:travelId",
+      name: "plan-detail",
+      component: PlanDetails,
     },
     {
       path: "/information",
