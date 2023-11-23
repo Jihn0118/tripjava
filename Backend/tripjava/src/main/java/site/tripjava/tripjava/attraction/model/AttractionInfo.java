@@ -13,7 +13,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 public class AttractionInfo {
     //관광지 ID
-    private long contendId;
+    private long contentId;
     // 이름
     private String title;
     // 주소
