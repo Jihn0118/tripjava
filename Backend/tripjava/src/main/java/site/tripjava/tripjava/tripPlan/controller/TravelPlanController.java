@@ -27,11 +27,11 @@ public class TravelPlanController {
 
     // 유저아이디 받아서 모든 여행계획 데이터 가져오기
     // security 적용하면 api 변경  => tripjava/plan (get)
-//    @GetMapping("/{id}")
-    public ResponseEntity<List<TravelPlan>> getTripPlanList(@PathVariable String id) throws SQLException {
-        System.out.println(id);
+    @GetMapping("/list/{userId}")
+    public ResponseEntity<List<TravelPlan>> getTripPlanList(@PathVariable String userId) throws SQLException {
+        System.out.println(userId);
 //        return tripPlanService.getTravelPlanList(id);
-        return new ResponseEntity<List<TravelPlan>>(tripPlanService.getTravelPlanList(id), HttpStatus.OK);
+        return new ResponseEntity<List<TravelPlan>>(tripPlanService.getTravelPlanList(userId), HttpStatus.OK);
     }
 
     // 계획 상세
