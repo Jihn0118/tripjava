@@ -103,7 +103,6 @@ const createImage = (day) => {
 
 const createLine = () => {
   for (var i = 0; i < lines.value.length; i++) {
-    var value = lines.value[i];
 
     var polyline = new kakao.maps.Polyline({
       path: lines.value[i], // 선을 구성하는 좌표배열 입니다
@@ -128,9 +127,6 @@ const loadMarkers = () => {
       }
       // 마커를 생성합니다
       markers.value = [];
-
-
-
 
 
       positions.value.forEach((position) => {
@@ -181,6 +177,6 @@ const deleteLines = () => {
 <style>
 #map {
   width: 100%;
-  height: 700px;
+  height: 900px;
 }
 </style>

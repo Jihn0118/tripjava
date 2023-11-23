@@ -82,13 +82,6 @@ const checkUserId = async () => {
             <a-radio value="W">여성</a-radio>
           </a-radio-group>
         </a-form-item>
-        <a-form-item label="프로필 이미지">
-          <a-upload action="/upload.do" list-type="picture-card">
-            <div>
-              <div style="margin-top: 8px">Upload</div>
-            </div>
-          </a-upload>
-        </a-form-item>
         <a-button @click="regist">회원가입</a-button>
       </a-form>
     </div>
