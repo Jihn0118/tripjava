@@ -52,14 +52,7 @@ const setTripdate = (val) => {
 
   message.success("날짜가 성공적으로 저장되었습니다.");
 
-  // // 기존에 선택된 메뉴의 클래스를 제거
-  // items.value.forEach((item) => {
-  //   item.class = "ant-menu-item";
-  // });
-
   menuNumber.value = "2";
-
-  // items.value[1].class = "ant-menu-item-selected";
 };
 
 // 카카오 마커 배열
@@ -186,9 +179,6 @@ const savePlan = () => {
     days: addDays,
   };
 
-  console.log("서버로 보낼 plan 데이터: ");
-  console.log(addPlan);
-
   registerTravelPlans(addPlan);
 };
 </script>
@@ -209,7 +199,6 @@ const savePlan = () => {
       </div>
 
       <div>
-        <!--자식 컴포넌트들 넣고 props emits으로 메뉴 부모한테 보내고 메뉴 부모에서 버튼 누르면 모든 여행 계획 데이터가 저장-->
         <PlanCalendar
           v-show="menuNumber === '1'"
           :plan="plan"
@@ -223,7 +212,6 @@ const savePlan = () => {
           @updateInfoList="updateInfoList"
         />
       </div>
-      <!-- 카카오맵 컴포넌트한테 Props로 :stations = "stations" 넘겨줘-->
     </div>
   </div>
   <VKakaoMap :stations="stations" />

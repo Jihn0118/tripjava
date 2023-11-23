@@ -44,17 +44,10 @@ const onSearch = () => {
     keyword: keyword.value,
     sidoCode: sidoSelectValue.value,
   };
-  //console.log(infoList);
-  console.log(attractionSelectValue.value);
-  console.log(sidoSelectValue.value);
-  console.log(keyword.value);
-  console.log(searchCondition);
   listInfo(
     searchCondition,
     ({ data }) => {
-      console.log("진호 search 버튼 데이터 가져옴");
       updateInfoList(data);
-      console.log(props.infoList);
     },
     (error) => {
       console.log(error);
@@ -259,12 +252,6 @@ const select = () => {
     }
   }
 
-  console.log("--- 담은 결과: plan ----");
-  console.log(props.plan);
-
-  console.log("--- 담은 결과: 카카오 마커(stations) ---");
-  console.log(stations.value);
-
   setStations(stations.value); // 카카오 마커 업데이트
 
   modalVisible.value = false;
@@ -298,12 +285,6 @@ const extractPlan = (attraction, day) => {
       stations.value.splice(index, 1);
     }
   });
-
-  console.log("--- 빼기 플랜---");
-  console.log(props.plan);
-
-  console.log("---뺴기 카카오마커(stations): ----");
-  console.log(stations.value);
 
   setStations(stations.value); // 카카오 마커 업데이트
 };
