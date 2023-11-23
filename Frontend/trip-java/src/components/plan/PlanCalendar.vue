@@ -1,12 +1,15 @@
 <script setup>
-import { ref } from "vue";
+import {ref} from "vue";
 import dayjs from "dayjs";
 
 const dateFormat = "YYYY-MM-DD";
 
-defineProps({
-  plan: Object,
-});
+const titleAndDate = ref({
+  "title": "",
+  "dateDiff": "",
+  "startDate": "",
+  "endDate": ""
+})
 
 let today = new Date();
 
@@ -17,28 +20,28 @@ const myCalendar = ref([
 
 const emit = defineEmits(["setTripdate"]);
 
-const setTripdate = (val) => {
-  val.dateDiff =
-    (myCalendar.value[1] - myCalendar.value[0]) / (24 * 60 * 60 * 1000) + 1;
+const createDate = () => {
+  titleAndDate.value.dateDiff = (myCalendar.value[1] - myCalendar.value[0]) / (24 * 60 * 60 * 1000) + 1;
+  titleAndDate.value.startDate = dayjs(myCalendar.value[0]).format(dateFormat);
+  titleAndDate.value.endDate = dayjs(myCalendar.value[1]).format(dateFormat);
 
-  val.startDate = dayjs(myCalendar.value[0]).format(dateFormat);
-  val.endDate = dayjs(myCalendar.value[1]).format(dateFormat);
-
-  emit("setTripdate", val);
+  emit("setTripdate", titleAndDate.value);
 };
 </script>
 
 <template>
-  <div name="tripDate" style="height: 700px; background-color: white">
+  <div style="height: 700px; background-color: white; width:70%">
     <a-input
-      v-model:value="plan.title"
-      size="large"
-      placeholder="여행 제목 입력"
+        v-model:value="titleAndDate.title"
+        size="large"
+        placeholder="여행 제목 입력"
+        style="margin-bottom: 5px"
     />
-    <a-range-picker v-model:value="myCalendar" :format="dateFormat" />
-    <div>
-      <a-button type="primary" @click="setTripdate(plan)"
-        >날짜 설정 완료</a-button
+    <a-range-picker v-model:value="myCalendar" :format="dateFormat"/>
+    <div style="margin-top: 20px">
+      <a-button type="primary" @click="createDate"
+      >날짜 설정 완료
+      </a-button
       >
     </div>
   </div>
