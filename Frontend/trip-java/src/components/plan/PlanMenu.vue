@@ -1,19 +1,23 @@
 <script setup>
 import { h, ref, onMounted } from "vue";
-import {
-  HomeOutlined,
-  CalendarOutlined,
-  AimOutlined,
-} from "@ant-design/icons-vue";
+
+import { storeToRefs } from "pinia";
+import { useMemberStore } from "@/stores/member";
 
 import { message } from "ant-design-vue";
+import { CalendarOutlined, AimOutlined } from "@ant-design/icons-vue";
 
 import PlanLocation from "./PlanLocation.vue";
 import PlanCalendar from "./PlanCalendar.vue";
-import PlanLodging from "./PlanLodging.vue";
+
 import VKakaoMap from "@/components/common/VKakaoMap.vue";
 
 import { listInfo } from "@/api/attractionInfo";
+import { registerTravelPlans } from "@/api/plan";
+
+const memberStore = useMemberStore();
+
+const { userInfo } = storeToRefs(memberStore);
 
 const menuNumber = ref("1");
 
@@ -32,19 +36,13 @@ const items = ref([
     label: "STEP 2 장소 선택",
     title: "STEP 2 장소 선택",
   },
-  {
-    key: "3",
-    icon: () => h(HomeOutlined),
-    label: "STEP 3 숙소 설정",
-    title: "STEP 3 숙소 설정",
-  },
 ]);
 
 const handleClick = (menuInfo) => {
   menuNumber.value = menuInfo.key;
 };
 
-const emit = defineEmits(["setTripdate", "setStations"]);
+const emit = defineEmits(["setTripdate", "setStations", "updateInfoList"]);
 
 const setTripdate = (val) => {
   plan.title = val.title;
@@ -155,6 +153,44 @@ const searchCondition = ref({
   keyword: "",
   sidoCode: "",
 });
+
+const updateInfoList = (newList) => {
+  filteredLocationList.value = newList;
+  console.log("부모 emit");
+  console.log(filteredLocationList.value);
+};
+
+// 일정 저장
+const savePlan = () => {
+  let addStartDate = plan.value.startDate;
+  let addEndDate = plan.value.endDate;
+  let addTravelName = plan.value.title;
+  let addDays = [];
+
+  plan.value.days.forEach((day) => {
+    let dayNum = day.day; // dayNumber 세팅
+    let addToDetails = []; // 해당 날짜의 details
+    day.attractions.forEach((attraction, index2) => {
+      addToDetails.push({
+        sequence: index2 + 1,
+        contentId: attraction.contentId,
+      });
+    });
+    addDays.push({ dayNumber: dayNum, details: addToDetails }); // days 배열에 추가
+  });
+  let addPlan = {
+    userId: userInfo.value.memberId,
+    startDate: addStartDate,
+    endDate: addEndDate,
+    travelName: addTravelName,
+    days: addDays,
+  };
+
+  console.log("서버로 보낼 plan 데이터: ");
+  console.log(addPlan);
+
+  registerTravelPlans(addPlan);
+};
 </script>
 
 <template>
@@ -169,7 +205,7 @@ const searchCondition = ref({
           :items="items"
           @click="handleClick"
         />
-        <a-button type="primary">일정 저장</a-button>
+        <a-button type="primary" @click="savePlan">일정 저장</a-button>
       </div>
 
       <div>
@@ -184,18 +220,13 @@ const searchCondition = ref({
           :plan="plan"
           :infoList="filteredLocationList"
           @set-stations="setStations"
-        />
-        <PlanLodging
-          v-show="menuNumber === '3'"
-          :infoList="filteredLodgingList"
+          @updateInfoList="updateInfoList"
         />
       </div>
-      <div>
-        <VKakaoMap :stations="stations" />
-        <!-- 카카오맵 컴포넌트한테 Props로 :stations = "stations" 넘겨줘-->
-      </div>
+      <!-- 카카오맵 컴포넌트한테 Props로 :stations = "stations" 넘겨줘-->
     </div>
   </div>
+  <VKakaoMap :stations="stations" />
 </template>
 
 <style scoped>

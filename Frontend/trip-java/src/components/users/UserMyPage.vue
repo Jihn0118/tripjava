@@ -1,8 +1,6 @@
 <script setup>
-import { ref } from "vue";
 import { storeToRefs } from "pinia";
 import { useMemberStore } from "@/stores/member";
-import { useMenuStore } from "@/stores/menu";
 
 const memberStore = useMemberStore();
 
