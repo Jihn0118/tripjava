@@ -1,12 +1,24 @@
 <script setup>
 import { ref } from "vue";
+import { message } from "ant-design-vue";
 
-import { StarOutlined, LikeOutlined, MessageOutlined, HeartFilled } from "@ant-design/icons-vue";
+import {
+  StarOutlined,
+  LikeOutlined,
+  MessageOutlined,
+  HeartFilled,
+} from "@ant-design/icons-vue";
 
 defineProps({
   plan: Object,
   infoList: Array,
 });
+
+const emit = defineEmits(["setStations"]);
+
+const setStations = function (val) {
+  emit("setStations", val);
+};
 
 const pagination = {
   onChange: (page) => {
@@ -70,34 +82,18 @@ const openModal = (plan, item) => {
   }
 
   itemToAdd.value = item;
-  console.log("itemToAdd in openModal");
-  console.log(itemToAdd);
+
   modalVisible.value = true;
 };
 
 // 선택된 관광지 데이터
 const itemToAdd = ref({});
 
-const stations = ref([
-  {
-    day: Number,
-    latitude: String,
-    longitude: String,
-  },
-]);
+// 카카오 마커 배열
+const stations = ref([]);
 
 // 관광지 담기
 const select = (plan) => {
-  // 마커 정보 배열에 정보 추가
-  stations.value.push({
-    day: selectValue.value,
-    latitude: itemToAdd.value.latitude,
-    longitude: itemToAdd.value.longitude,
-  });
-
-  console.log("관광지 카카오에 담기");
-  console.log(stations.value);
-
   // O일차에 기존에 데이터가 하나도 없으면 객체 생성
   if (checkAttractions.value[selectValue.value - 1] == false) {
     let attraction = [];
@@ -112,22 +108,65 @@ const select = (plan) => {
       lodging: null,
     });
 
-    console.log(plan.days);
-
     checkAttractions.value[selectValue.value - 1] = true;
+
+    // 마커 정보 배열에 정보 추가
+    stations.value.push({
+      day: selectValue.value,
+      lat: itemToAdd.value.latitude,
+      lng: itemToAdd.value.longitude,
+    });
   } else {
+    let checkInPlan = false;
     // O일차에 기존에 데이터가 있으면 관광지 추가
+
+    // O일차에 기존에 똑같은 관광지 데이터가 있으면 추가 못함
     for (let i = 0; i < plan.days.length; i++) {
       if (plan.days[i].day == selectValue.value) {
-        itemToAdd.value["sequence"] = plan.days[i].attractions.length + 1; // 몇 개 있는 지
-        console.log("기존에 " + plan.days[i].day + "일차에 데이터 있음");
-        plan.days[i].attractions.push(itemToAdd.value);
+        for (let j = 0; j < plan.days[i].attractions.length; j++) {
+          if (
+            plan.days[i].attractions[j].contentId == itemToAdd.value.contentId
+          ) {
+            message.error(
+              "이미 " +
+                (i + 1) +
+                "일차에 " +
+                itemToAdd.value.title +
+                "이(가) 있습니다."
+            );
+            checkInPlan = true;
+          }
+        }
+        break;
+      }
+    }
+
+    // 없으면 추가
+    if (checkInPlan == false) {
+      for (let i = 0; i < plan.days.length; i++) {
+        if (plan.days[i].day == selectValue.value) {
+          itemToAdd.value["sequence"] = plan.days[i].attractions.length + 1; // 몇 개 있는 지
+          plan.days[i].attractions.push(itemToAdd.value);
+
+          // 마커 정보 배열에 정보 추가
+          stations.value.push({
+            day: selectValue.value,
+            lat: itemToAdd.value.latitude,
+            lng: itemToAdd.value.longitude,
+          });
+        }
       }
     }
   }
 
   console.log("--- 담은 결과: plan ----");
   console.log(plan);
+
+  console.log("--- 담은 결과: 카카오 마커(stations) ---");
+  console.log(stations.value);
+
+  setStations(stations.value); // 카카오 마커 업데이트
+
   modalVisible.value = false;
 };
 
@@ -136,37 +175,37 @@ const select = (plan) => {
 // plan에서도 빼줘야함
 
 const extractPlan = (attraction, plan, day) => {
-  console.log("추출버튼: ");
   // 계획에서 빼주기
-  console.log("plan 하나 빼기 전");
-  console.log(plan);
-
   plan.days.forEach((item) => {
     if (item.day === day) {
       item.attractions.forEach((target, index) => {
-        if (target.latitude == attraction.latitude && target.longitude == attraction.longitude) {
+        if (
+          target.latitude == attraction.latitude &&
+          target.longitude == attraction.longitude
+        ) {
           item.attractions.splice(index, 1);
-          console.log("plan에서 하나 빼기");
-          console.log(plan);
         }
       });
     }
   });
 
-  console.log("카카오 하나 빼기 전");
-  console.log(stations.value);
-
   stations.value.forEach((item, index) => {
     if (
       item.day === day &&
-      item.latitude == attraction.latitude &&
-      item.longitude == attraction.longitude
+      item.lat == attraction.latitude &&
+      item.lng == attraction.longitude
     ) {
       stations.value.splice(index, 1);
-      console.log("카카오 마커 배열에서 하나 빼기");
-      console.log(stations.value);
     }
   });
+
+  console.log("--- 빼기 플랜---");
+  console.log(plan);
+
+  console.log("---뺴기 카카오마커(stations): ----");
+  console.log(stations.value);
+
+  setStations(stations.value); // 카카오 마커 업데이트
 };
 </script>
 
@@ -189,7 +228,14 @@ const extractPlan = (attraction, plan, day) => {
       @change="handleChange"
     ></a-select>
   </a-modal>
-  <div style="display: flex; flex-direction: row; height: 1000px; background-color: white">
+  <div
+    style="
+      display: flex;
+      flex-direction: row;
+      height: 1000px;
+      background-color: white;
+    "
+  >
     <div style="width: 450px">
       <h1>장소 선택</h1>
       <a-input-search
@@ -215,7 +261,13 @@ const extractPlan = (attraction, plan, day) => {
               </span>
             </template>
             <template #extra>
-              <div style="display: flex; flex-direction: column; align-items: center">
+              <div
+                style="
+                  display: flex;
+                  flex-direction: column;
+                  align-items: center;
+                "
+              >
                 <img width="182" alt="no Image" :src="item.image" />
                 <a-button
                   type="primary"
@@ -236,7 +288,8 @@ const extractPlan = (attraction, plan, day) => {
 
     <div style="margin-left: 5px; min-width: 350px">
       <h3 v-show="plan.endDate != ''">
-        {{ plan.startDate }} ~ {{ plan.endDate }} ({{ plan.dateDiff - 1 }}박 {{ plan.dateDiff }}일)
+        {{ plan.startDate }} ~ {{ plan.endDate }} ({{ plan.dateDiff - 1 }}박
+        {{ plan.dateDiff }}일)
       </h3>
       <div class="card-container">
         <a-tabs v-model:activeKey="activeKey" type="card">
@@ -249,16 +302,19 @@ const extractPlan = (attraction, plan, day) => {
             <div v-for="planDay in plan.days">
               <div v-show="planDay.day == index + 1">
                 <div
-                  v-for="attraction in planDay.attractions"
+                  v-for="(attraction, index2) in planDay.attractions"
                   :key="attraction.contentId"
                   style="margin-top: 10px"
                 >
-                  <div>{{ attraction.sequence }} 번</div>
+                  <div>{{ index2 + 1 }} 번</div>
                   <div>{{ attraction.contentId }}</div>
                   <div>{{ attraction.title }}</div>
                   <div>{{ attraction.latitude }}</div>
                   <div>{{ attraction.longitude }}</div>
-                  <a-button type="primary" danger @click="extractPlan(attraction, plan, index + 1)"
+                  <a-button
+                    type="primary"
+                    danger
+                    @click="extractPlan(attraction, plan, index + 1)"
                     >빼기</a-button
                   >
                 </div>
@@ -316,7 +372,11 @@ h1 {
 [data-theme="dark"] #components-tabs-demo-card-top .code-box-demo {
   background: #000;
 }
-[data-theme="dark"] .card-container > .ant-tabs-card .ant-tabs-content > .ant-tabs-tabpane {
+[data-theme="dark"]
+  .card-container
+  > .ant-tabs-card
+  .ant-tabs-content
+  > .ant-tabs-tabpane {
   background: #141414;
 }
 [data-theme="dark"] .card-container > .ant-tabs-card .ant-tabs-tab-active {
