@@ -25,20 +25,23 @@ public class TravelPlanController {
         return ResponseEntity.ok().build();
     }
 
+    // 유저아이디 받아서 모든 여행계획 데이터 가져오기
     // security 적용하면 api 변경  => tripjava/plan (get)
 //    @GetMapping("/{id}")
-    public ResponseEntity<List<TravelPlan>> getTripPlanList(@PathVariable Long id) throws SQLException {
+    public ResponseEntity<List<TravelPlan>> getTripPlanList(@PathVariable String id) throws SQLException {
         System.out.println(id);
 //        return tripPlanService.getTravelPlanList(id);
         return new ResponseEntity<List<TravelPlan>>(tripPlanService.getTravelPlanList(id), HttpStatus.OK);
     }
 
+    // 계획 상세
     @GetMapping("/{travelId}")
     public ResponseEntity<List<Day>> getTripPlan(@PathVariable Long travelId) throws SQLException {
         System.out.println(travelId);
         return new ResponseEntity<List<Day>>(tripPlanService.getTravelDetailPlan(travelId), HttpStatus.OK);
     }
 
+    // 계획 지우기
     @DeleteMapping("/{travelId}")
     public ResponseEntity<Void> deleteTripPlan(@PathVariable Long travelId) throws SQLException{
         System.out.println(travelId);
@@ -46,6 +49,7 @@ public class TravelPlanController {
         return ResponseEntity.ok().build();
     }
 
+    // 계획 수정
     @PutMapping
     public ResponseEntity<Void> modifyTripPlan(@RequestBody TravelPlan travelPlan) throws SQLException{
         System.out.println(travelPlan);

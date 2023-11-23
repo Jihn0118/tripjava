@@ -38,14 +38,34 @@
             AND content_type_id = #{contentType}
         </if>
         <if test="keyword != null and keyword != ''">
-            AND title LIKE CONCAT(‘%’, #{keyword}, ‘%’)
+            AND title LIKE CONCAT('%', #{keyword}, '%')
         </if>
         <if test="sidoCode != null and sidoCode != ''">
-            AND sido_Code = #{sidoCode}
+            AND sido_code = #{sidoCode}
+        </if>
+        <if test="contentType == null and keyword == null and sidoCode == null">
+            AND 1=1
         </if>
         order by love desc
         limit 120
     </select>
+
+    <!--    <select id="searchAttraction" parameterType="searchCondition" resultMap="attractionInfo">-->
+<!--        select content_id, title, addr1, first_image, latitude, longitude, love-->
+<!--        from attraction_info-->
+<!--        where first_image != ''-->
+<!--        <if test="contentType != null and contentType != ''">-->
+<!--            AND content_type_id = #{contentType}-->
+<!--        </if>-->
+<!--        <if test="keyword != null and keyword != ''">-->
+<!--            AND title LIKE CONCAT('%', #{keyword}, '%')-->
+<!--        </if>-->
+<!--        <if test="sidoCode != null and sidoCode != ''">-->
+<!--            AND sido_code = #{sidoCode}-->
+<!--        </if>-->
+<!--        order by love desc-->
+<!--        limit 120-->
+<!--    </select>-->
 
     <select id="getSidoInfo"  resultMap="sidoInfo">
         select sido_name, sido_code

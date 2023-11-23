@@ -21,7 +21,7 @@ public class TravelPlanServiceImpl implements TravelPlanService {
     @Transactional
     public void registerTripPlan(TravelPlan travelPlan) throws SQLException {
         // 로그인 구현시 제거, db user_id not null 조건
-        travelPlan.setUserId(1L);
+        //travelPlan.setUserId(1L);
         tripPlanMapper.registerTripPlan(travelPlan);
         List<Day> days = travelPlan.getDays();
         if (days != null && !days.isEmpty()) {
@@ -37,7 +37,7 @@ public class TravelPlanServiceImpl implements TravelPlanService {
     }
 
     @Override
-    public List<TravelPlan> getTravelPlanList(Long id) throws SQLException {
+    public List<TravelPlan> getTravelPlanList(String id) throws SQLException {
         return tripPlanMapper.getTravelPlanList(id);
     }
 

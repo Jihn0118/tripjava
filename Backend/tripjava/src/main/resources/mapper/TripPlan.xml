@@ -53,7 +53,7 @@
         </foreach>
     </insert>
 
-    <select id="getTravelPlanList" parameterType="long" resultMap="tripPlan">
+    <select id="getTravelPlanList" parameterType="string" resultMap="tripPlan">
         select travel_id, user_id, start_date, end_date, travel_name
         from TravelPlan
         where user_id = #{userId}
