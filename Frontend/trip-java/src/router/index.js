@@ -10,17 +10,18 @@ import PlanLodging from "@/components/plan/PlanLodging.vue";
 import { storeToRefs } from "pinia";
 import { useMemberStore } from "@/stores/member";
 
+import {message} from 'ant-design-vue'
+const error = () =>{
+  message.error("로그인이 필요합니다")
+}
+
 const onlyAuthUser = async (to, from, next) => {
+
   const memberStore = useMemberStore();
   const { userInfo, isValidToken } = storeToRefs(memberStore);
-  const { getUserInfo } = memberStore;
 
-  let token = sessionStorage.getItem("accessToken");
-
-  if (userInfo.value != null && token) {
-    await getUserInfo(token);
-  }
-  if (!isValidToken.value || userInfo.value === null) {
+  if (userInfo.value === null) {
+    error();
     next({ name: "user-login" });
   } else {
     next();
@@ -43,6 +44,7 @@ const router = createRouter({
     {
       path: "/plan",
       name: "plan",
+      beforeEnter: onlyAuthUser,
       component: Planview,
       // children: [
       //   {
@@ -69,6 +71,7 @@ const router = createRouter({
     {
       path: "/information/:infoId",
       name: "information-detail",
+      beforeEnter: onlyAuthUser,
       component: () => import("@/components/tripInfo/InfoDetail.vue"),
     },
     {
@@ -94,12 +97,13 @@ const router = createRouter({
         {
           path: "mypage",
           name: "user-mypage",
-          // beforeEnter: onlyAuthUser,
+          beforeEnter: onlyAuthUser,
           component: () => import("@/components/users/UserMyPage.vue"),
         },
         {
           path: "myplan",
           name: "user-plan",
+          beforeEnter: onlyAuthUser,
           component: () => import("@/components/users/UserPlans.vue"),
         },
         // {
