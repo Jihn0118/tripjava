@@ -1,12 +1,24 @@
 <script setup>
 import { ref } from "vue";
+import { message } from "ant-design-vue";
 
-import { StarOutlined, LikeOutlined, MessageOutlined, HeartFilled } from "@ant-design/icons-vue";
+import {
+  StarOutlined,
+  LikeOutlined,
+  MessageOutlined,
+  HeartFilled,
+} from "@ant-design/icons-vue";
 
 defineProps({
   plan: Object,
   infoList: Array,
 });
+
+const emit = defineEmits(["setStations"]);
+
+const setStations = function (val) {
+  emit("setStations", val);
+};
 
 const pagination = {
   onChange: (page) => {
@@ -39,55 +51,10 @@ const onSearch = (searchValue) => {
   //console.log("or use this.value", value.value);
 };
 
-const activeKey = ref("2");
+const activeKey = ref("1");
 
 // O일차에 관광지 데이터가 있는 지 체크하는 변수
 const checkAttractions = ref([]);
-
-// 관광지 담기
-const select = (plan) => {
-  console.log("모달 확인");
-  console.log("item in select : ");
-  console.log(itemToAdd.value);
-  console.log(selectValue.value); //2일차일땐 2
-
-  // 기존에 2일차에 데이터가 하나도 없으면 객체 생성
-  if (checkAttractions.value[selectValue.value - 1] == false) {
-    let attraction = [];
-    attraction.push(itemToAdd.value);
-
-    // console.log("attraction: ");
-    // console.log(attraction);
-
-    // console.log("plan: ");
-    // console.log(plan);
-
-    // console.log("plan.days에 추가하기 전");
-    // console.log(plan.days);
-
-    //console.log("plan.days에 추가한 후");
-    plan.days.push({
-      day: selectValue.value,
-      attractions: attraction,
-      lodging: null,
-    });
-    console.log(plan.days);
-
-    checkAttractions.value[selectValue.value - 1] = true;
-  } else {
-    // 기존에 2일차에 데이터가 있으면 관광지 추가
-    for (let i = 0; i < plan.days.length; i++) {
-      if (plan.days[i].day == selectValue.value) {
-        console.log("기존에 " + plan.days[i].day + "일차에 데이터 있음");
-        plan.days[i].attractions.push(itemToAdd.value);
-      }
-    }
-  }
-
-  console.log("--- 담은 결과: plan ----");
-  console.log(plan);
-  modalVisible.value = false;
-};
 
 const modalVisible = ref(false);
 
@@ -105,13 +72,7 @@ const filterOption = (input, option) => {
 const selectValue = ref(undefined);
 
 // 모달 만든 적 없으면 select 옵션 만들고 모달 띄우기
-const modalParams = ref({});
-
 const openModal = (plan, item) => {
-  console.log("plan in openModal : ");
-  console.log(plan);
-  console.log("item in openModal : ");
-  console.log(item);
   if (!setModal.value) {
     for (let i = 1; i <= plan.dateDiff; i++) {
       options.value.push({ value: i, label: i + "일차" });
@@ -119,14 +80,133 @@ const openModal = (plan, item) => {
     }
     setModal.value = true;
   }
-  console.log(options.value);
+
   itemToAdd.value = item;
-  console.log("itemToAdd in openModal");
-  console.log(itemToAdd);
+
   modalVisible.value = true;
 };
 
+// 선택된 관광지 데이터
 const itemToAdd = ref({});
+
+// 카카오 마커 배열
+const stations = ref([]);
+
+// 관광지 담기
+const select = (plan) => {
+  // O일차에 기존에 데이터가 하나도 없으면 객체 생성
+  if (checkAttractions.value[selectValue.value - 1] == false) {
+    let attraction = [];
+
+    itemToAdd.value["sequence"] = 1;
+
+    attraction.push(itemToAdd.value);
+
+    plan.days.push({
+      day: selectValue.value,
+      attractions: attraction,
+      lodging: null,
+    });
+
+    checkAttractions.value[selectValue.value - 1] = true;
+
+    // 마커 정보 배열에 정보 추가
+    stations.value.push({
+      day: selectValue.value,
+      lat: itemToAdd.value.latitude,
+      lng: itemToAdd.value.longitude,
+    });
+  } else {
+    let checkInPlan = false;
+    // O일차에 기존에 데이터가 있으면 관광지 추가
+
+    // O일차에 기존에 똑같은 관광지 데이터가 있으면 추가 못함
+    for (let i = 0; i < plan.days.length; i++) {
+      if (plan.days[i].day == selectValue.value) {
+        for (let j = 0; j < plan.days[i].attractions.length; j++) {
+          if (
+            plan.days[i].attractions[j].contentId == itemToAdd.value.contentId
+          ) {
+            message.error(
+              "이미 " +
+                (i + 1) +
+                "일차에 " +
+                itemToAdd.value.title +
+                "이(가) 있습니다."
+            );
+            checkInPlan = true;
+          }
+        }
+        break;
+      }
+    }
+
+    // 없으면 추가
+    if (checkInPlan == false) {
+      for (let i = 0; i < plan.days.length; i++) {
+        if (plan.days[i].day == selectValue.value) {
+          itemToAdd.value["sequence"] = plan.days[i].attractions.length + 1; // 몇 개 있는 지
+          plan.days[i].attractions.push(itemToAdd.value);
+
+          // 마커 정보 배열에 정보 추가
+          stations.value.push({
+            day: selectValue.value,
+            lat: itemToAdd.value.latitude,
+            lng: itemToAdd.value.longitude,
+          });
+        }
+      }
+    }
+  }
+
+  console.log("--- 담은 결과: plan ----");
+  console.log(plan);
+
+  console.log("--- 담은 결과: 카카오 마커(stations) ---");
+  console.log(stations.value);
+
+  setStations(stations.value); // 카카오 마커 업데이트
+
+  modalVisible.value = false;
+};
+
+// 중간에 리스트에서 빼기 버튼 눌렀을 때,
+//마커 배열에서도 빼줘야하고,
+// plan에서도 빼줘야함
+
+const extractPlan = (attraction, plan, day) => {
+  // 계획에서 빼주기
+  plan.days.forEach((item) => {
+    if (item.day === day) {
+      item.attractions.forEach((target, index) => {
+        if (
+          target.latitude == attraction.latitude &&
+          target.longitude == attraction.longitude
+        ) {
+          item.attractions.splice(index, 1);
+        }
+      });
+    }
+  });
+
+  stations.value.forEach((item, index) => {
+    if (
+      item.day === day &&
+      item.lat == attraction.latitude &&
+      item.lng == attraction.longitude
+    ) {
+      stations.value.splice(index, 1);
+    }
+  });
+
+  console.log("--- 빼기 플랜---");
+  console.log(plan);
+
+  console.log("---뺴기 카카오마커(stations): ----");
+  console.log(stations.value);
+
+  setStations(stations.value); // 카카오 마커 업데이트
+};
 </script>
 
 <template>
@@ -148,7 +228,14 @@ const itemToAdd = ref({});
       @change="handleChange"
     ></a-select>
   </a-modal>
-  <div style="display: flex; flex-direction: row; height: 1000px; background-color: white">
+  <div
+    style="
+      display: flex;
+      flex-direction: row;
+      height: 1000px;
+      background-color: white;
+    "
+  >
     <div style="width: 450px">
       <h1>장소 선택</h1>
       <a-input-search
@@ -174,7 +261,13 @@ const itemToAdd = ref({});
               </span>
             </template>
             <template #extra>
-              <div style="display: flex; flex-direction: column; align-items: center">
+              <div
+                style="
+                  display: flex;
+                  flex-direction: column;
+                  align-items: center;
+                "
+              >
                 <img width="182" alt="no Image" :src="item.image" />
                 <a-button
                   type="primary"
@@ -195,24 +288,35 @@ const itemToAdd = ref({});
 
     <div style="margin-left: 5px; min-width: 350px">
       <h3 v-show="plan.endDate != ''">
-        {{ plan.startDate }} ~ {{ plan.endDate }} ({{ plan.dateDiff - 1 }}박 {{ plan.dateDiff }}일)
+        {{ plan.startDate }} ~ {{ plan.endDate }} ({{ plan.dateDiff - 1 }}박
+        {{ plan.dateDiff }}일)
       </h3>
       <div class="card-container">
         <a-tabs v-model:activeKey="activeKey" type="card">
-          <a-tab-pane v-for="(item, index) in plan.dateDiff" :key="index" :tab="`${index + 1}일차`">
+          <a-tab-pane
+            v-for="(item, index) in plan.dateDiff"
+            :key="index + 1"
+            :tab="`${index + 1}일차`"
+          >
             <p>{{ index + 1 }} 일차</p>
             <div v-for="planDay in plan.days">
               <div v-show="planDay.day == index + 1">
                 <div
-                  v-for="(attraction, index) in planDay.attractions"
+                  v-for="(attraction, index2) in planDay.attractions"
                   :key="attraction.contentId"
                   style="margin-top: 10px"
                 >
-                  <div>{{ index }} 번</div>
+                  <div>{{ index2 + 1 }} 번</div>
                   <div>{{ attraction.contentId }}</div>
                   <div>{{ attraction.title }}</div>
                   <div>{{ attraction.latitude }}</div>
                   <div>{{ attraction.longitude }}</div>
+                  <a-button
+                    type="primary"
+                    danger
+                    @click="extractPlan(attraction, plan, index + 1)"
+                    >빼기</a-button
+                  >
                 </div>
               </div>
             </div>
@@ -268,7 +372,11 @@ h1 {
 [data-theme="dark"] #components-tabs-demo-card-top .code-box-demo {
   background: #000;
 }
-[data-theme="dark"] .card-container > .ant-tabs-card .ant-tabs-content > .ant-tabs-tabpane {
+[data-theme="dark"]
+  .card-container
+  > .ant-tabs-card
+  .ant-tabs-content
+  > .ant-tabs-tabpane {
   background: #141414;
 }
 [data-theme="dark"] .card-container > .ant-tabs-card .ant-tabs-tab-active {
