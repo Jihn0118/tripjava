@@ -10,13 +10,12 @@ import PlanLodging from "@/components/plan/PlanLodging.vue";
 import { storeToRefs } from "pinia";
 import { useMemberStore } from "@/stores/member";
 
-import {message} from 'ant-design-vue'
-const error = () =>{
-  message.error("로그인이 필요합니다")
-}
+import { message } from "ant-design-vue";
+const error = () => {
+  message.error("로그인이 필요합니다");
+};
 
 const onlyAuthUser = async (to, from, next) => {
-
   const memberStore = useMemberStore();
   const { userInfo, isValidToken } = storeToRefs(memberStore);
 
@@ -104,7 +103,8 @@ const router = createRouter({
           path: "myplan",
           name: "user-plan",
           beforeEnter: onlyAuthUser,
-          component: () => import("@/components/users/UserPlans.vue"),
+          component: () => import("@/components/plan/PlanDetails.vue"),
+          //component: () => import("@/components/users/UserPlans.vue"),
         },
         // {
         //   path: "modify/:userid",

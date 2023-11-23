@@ -77,4 +77,10 @@
         where travel_id = #{travelId}
     </delete>
 
+    <select id="getTravelPlan" parameterType="long" resultMap="tripPlan">
+        select user_id, start_date, end_date, travel_name, days
+        from travelplan
+        where travel_id = #{travelId}
+    </select>
+
 </mapper>

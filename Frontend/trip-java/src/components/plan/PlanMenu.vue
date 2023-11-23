@@ -1,6 +1,8 @@
 <script setup>
 import { h, ref, onMounted } from "vue";
 
+import { useRouter } from "vue-router";
+
 import { storeToRefs } from "pinia";
 import { useMemberStore } from "@/stores/member";
 
@@ -14,6 +16,8 @@ import VKakaoMap from "@/components/common/VKakaoMap.vue";
 
 import { listInfo } from "@/api/attractionInfo";
 import { registerTravelPlans } from "@/api/plan";
+
+const router = useRouter();
 
 const memberStore = useMemberStore();
 
@@ -180,6 +184,8 @@ const savePlan = () => {
   };
 
   registerTravelPlans(addPlan);
+
+  router.push("/user/mypage");
 };
 </script>
 

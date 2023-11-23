@@ -386,7 +386,7 @@ const extractPlan = (attraction, day) => {
       <!--a-list 끝-->
     </div>
 
-    <div style="margin-left: 5px; min-width: 350px">
+    <div style="margin-left: 5px; min-width: 300px">
       <h3 v-show="props.plan.endDate != ''">
         {{ props.plan.startDate }} ~ {{ props.plan.endDate }} ({{
           props.plan.dateDiff - 1
@@ -401,23 +401,39 @@ const extractPlan = (attraction, day) => {
           >
             <p>{{ index + 1 }} 일차</p>
             <div v-for="planDay in props.plan.days">
-              <div v-show="planDay.day == index + 1">
+              <div
+                v-show="planDay.day == index + 1"
+                style="overflow-y: scroll; height: 700px"
+              >
                 <div
-                  v-for="(attraction, index2) in planDay.attractions"
+                  v-for="attraction in planDay.attractions"
                   :key="attraction.contentId"
-                  style="margin-top: 10px"
+                  style="
+                    margin-top: 10px;
+                    display: flex;
+                    justify-content: center;
+                  "
                 >
-                  <div>{{ index2 + 1 }} 번</div>
-                  <div>{{ attraction.contentId }}</div>
-                  <div>{{ attraction.title }}</div>
-                  <div>{{ attraction.latitude }}</div>
-                  <div>{{ attraction.longitude }}</div>
-                  <a-button
-                    type="primary"
-                    danger
-                    @click="extractPlan(attraction, index + 1)"
-                    >빼기</a-button
-                  >
+                  <a-card hoverable style="width: 150px" size="small">
+                    <template #cover>
+                      <img alt="noImage" :src="attraction.image" />
+                    </template>
+                    <a-card-meta
+                      style="text-align: center"
+                      :title="attraction.title"
+                    >
+                      <template #description>{{ attraction.addr1 }}</template>
+                    </a-card-meta>
+
+                    <template #actions>
+                      <a-button
+                        type="primary"
+                        danger
+                        @click="extractPlan(attraction, index + 1)"
+                        >빼기</a-button
+                      >
+                    </template>
+                  </a-card>
                 </div>
               </div>
             </div>
