@@ -7,4 +7,7 @@ function registerTravelPlans(plan, success, fail) {
   local.post(`/plan`, plan).then(success).catch(fail);
 }
 
-export { registerTravelPlans };
+function getTravelPlans(userId,success,fail){
+  local.get(`plan/list/${userId}`).then(success).catch(fail);
+}
+export { registerTravelPlans,getTravelPlans };
