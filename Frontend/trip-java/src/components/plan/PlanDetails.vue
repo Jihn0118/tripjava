@@ -1,28 +1,26 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { getPlan } from "@/api/plan";
-import { allContentFindById } from "@/api/attractionInfo";
+import { infoDetail } from "@/api/attractionInfo";
 import { useRoute } from "vue-router";
 
 const route = useRoute();
 
 const days = ref([]);
 const details = ref([]);
-const contentIdList2 = ref([]);
+const contentIdList = ref([]);
+const contentList = ref([]);
 
 const getPlanInfo = () => {
   getPlan(
-    // props.travelId,
-    // travelId,
     route.params.travelId,
     ({ data }) => {
-      console.log(data);
       data.forEach((element) => {
         let dayNum = element.dayNumber;
         let detail = element.details;
         detail.forEach((det) => {
           details.value.push(det.contentId);
-          contentIdList2.value.push(det.contentId);
+          contentIdList.value.push(det.contentId);
         });
         days.value.push({ dayNumber: dayNum, details: details.value });
       });
@@ -30,7 +28,7 @@ const getPlanInfo = () => {
       console.log("데이터 가공");
       console.log(days.value);
       console.log("콘텐트아이디 리스트");
-      //console.log(contentIdList.value);
+      console.log(contentIdList.value);
       //details.value.push();
       //days.value.push();
     },
@@ -38,17 +36,22 @@ const getPlanInfo = () => {
       console.log(error);
     }
   );
-  getContent();
 };
 
-const getContent = () => {
-  console.log("제발");
-  let contentIdList = contentIdList2.value;
-  console.log(contentIdList);
-  allContentFindById(contentIdList, ({ data }) => {
-    console.log("content 가져오기");
-    console.log(data);
-  });
+const getContentList = () => {
+  console.log("content 가져오기");
+  console.log(contentIdList.value);
+  if (contentIdList.value.length != 0) {
+    for (let i = 0; i < contentIdList.value.length; i++) {
+      let contentId = contentIdList.value[i];
+      console.log("contentId는: ");
+      console.log(contentId);
+      infoDetail(contentId, ({ data }) => {
+        console.log("함수 안?");
+        console.log(data);
+      });
+    }
+  }
 };
 
 onMounted(() => {
@@ -59,6 +62,8 @@ onMounted(() => {
   console.log(route.query.travelName);
 
   getPlanInfo();
+
+  getContentList();
 });
 </script>
 
@@ -70,12 +75,13 @@ onMounted(() => {
   <div style="text-align: center; margin: 0 auto">
     <h1>{{ route.query.travelName }}</h1>
     <a-timeline>
-      <a-timeline-item v-for="(item, index) in items" :key="index">1일차 내용</a-timeline-item>
       <a-timeline-item color="green" mode="left"
         >{{ route.query.startDate }} 여행 시작</a-timeline-item
       >
-      <a-timeline-item mode="right">2일차 내용</a-timeline-item>
-      <a-timeline-item mode="right">3일차 내용</a-timeline-item>
+      <a-timeline-item v-for="(day, index) in days" :key="index"
+        >{{ day.dayNumber }}일차 내용
+      </a-timeline-item>
+
       <a-timeline-item color="red" mode="left">{{ route.query.endDate }} 여행 끝</a-timeline-item>
     </a-timeline>
   </div>

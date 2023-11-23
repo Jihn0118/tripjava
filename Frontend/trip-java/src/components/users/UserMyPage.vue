@@ -47,6 +47,9 @@ onMounted(() => {
   <div style="width: 100%; display: flex; justify-content: space-around; margin-top: 30px">
     <div style="width: 30%; height: 250px">
       <a-descriptions :title="userInfo.user_name" bordered :column="1">
+        <a-descriptions-item label="닉네임" style="text-align: center"
+          >{{ userInfo.name }}
+        </a-descriptions-item>
         <a-descriptions-item label="아이디" style="text-align: center"
           >{{ userInfo.memberId }}
         </a-descriptions-item>
