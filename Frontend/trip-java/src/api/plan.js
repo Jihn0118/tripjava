@@ -10,4 +10,9 @@ function registerTravelPlans(plan, success, fail) {
 function getTravelPlans(userId,success,fail){
   local.get(`plan/list/${userId}`).then(success).catch(fail);
 }
-export { registerTravelPlans,getTravelPlans };
+
+async function getPlan(travelId, success, fail) {
+  await local.get(`/plan/${travelId}`).then(success).catch(fail);
+}
+
+export { registerTravelPlans, getTravelPlans,getPlan };

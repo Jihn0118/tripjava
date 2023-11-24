@@ -36,14 +36,14 @@ public class TravelPlanController {
 
     // 계획 상세
     @GetMapping("/{travelId}")
-    public ResponseEntity<List<Day>> getTripPlan(@PathVariable Long travelId) throws SQLException {
+    public ResponseEntity<List<Day>> getTravelPlanDays(@PathVariable Long travelId) throws SQLException {
         System.out.println(travelId);
         return new ResponseEntity<List<Day>>(tripPlanService.getTravelDetailPlan(travelId), HttpStatus.OK);
     }
 
     // 계획 지우기
     @DeleteMapping("/{travelId}")
-    public ResponseEntity<Void> deleteTripPlan(@PathVariable Long travelId) throws SQLException{
+    public ResponseEntity<Void> deleteTravelPlan(@PathVariable Long travelId) throws SQLException{
         System.out.println(travelId);
         tripPlanService.deleteTripPlan(travelId);
         return ResponseEntity.ok().build();

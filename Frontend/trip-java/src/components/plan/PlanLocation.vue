@@ -10,7 +10,7 @@ const props = defineProps({
   infoList: Array,
 });
 
-const emit = defineEmits(["setStations", "updateInfoList","save"]);
+const emit = defineEmits(["setStations", "updateInfoList", "save"]);
 
 const setStations = function (val) {
   emit("setStations", val);
@@ -20,10 +20,9 @@ const updateInfoList = function (val) {
   emit("updateInfoList", val);
 };
 
-const click = () =>{
+const click = () => {
   emit("save");
-}
-
+};
 
 const pagination = {
   onChange: (page) => {
@@ -220,16 +219,9 @@ const select = () => {
     for (let i = 0; i < props.plan.days.length; i++) {
       if (props.plan.days[i].day == selectValue.value) {
         for (let j = 0; j < props.plan.days[i].attractions.length; j++) {
-          if (
-            props.plan.days[i].attractions[j].contentId ==
-            itemToAdd.value.contentId
-          ) {
+          if (props.plan.days[i].attractions[j].contentId == itemToAdd.value.contentId) {
             message.error(
-              "이미 " +
-                (i + 1) +
-                "일차에 " +
-                itemToAdd.value.title +
-                "이(가) 있습니다."
+              "이미 " + (i + 1) + "일차에 " + itemToAdd.value.title + "이(가) 있습니다."
             );
             checkInPlan = true;
           }
@@ -242,8 +234,7 @@ const select = () => {
     if (checkInPlan == false) {
       for (let i = 0; i < props.plan.days.length; i++) {
         if (props.plan.days[i].day == selectValue.value) {
-          itemToAdd.value["sequence"] =
-            props.plan.days[i].attractions.length + 1; // 몇 개 있는 지
+          itemToAdd.value["sequence"] = props.plan.days[i].attractions.length + 1; // 몇 개 있는 지
           props.plan.days[i].attractions.push(itemToAdd.value);
 
           // 마커 정보 배열에 정보 추가
@@ -271,10 +262,7 @@ const extractPlan = (attraction, day) => {
   props.plan.days.forEach((item) => {
     if (item.day === day) {
       item.attractions.forEach((target, index) => {
-        if (
-          target.latitude == attraction.latitude &&
-          target.longitude == attraction.longitude
-        ) {
+        if (target.latitude == attraction.latitude && target.longitude == attraction.longitude) {
           item.attractions.splice(index, 1);
         }
       });
@@ -282,11 +270,7 @@ const extractPlan = (attraction, day) => {
   });
 
   stations.value.forEach((item, index) => {
-    if (
-      item.day === day &&
-      item.lat == attraction.latitude &&
-      item.lng == attraction.longitude
-    ) {
+    if (item.day === day && item.lat == attraction.latitude && item.lng == attraction.longitude) {
       stations.value.splice(index, 1);
     }
   });
@@ -314,14 +298,7 @@ const extractPlan = (attraction, day) => {
       @change="handleChange"
     ></a-select>
   </a-modal>
-  <div
-    style="
-      display: flex;
-      flex-direction: row;
-      height: 1000px;
-      background-color: white;
-    "
-  >
+  <div style="display: flex; flex-direction: row; height: 1000px; background-color: white">
     <div style="width: 400px">
       <div style="display: flex; justify-content: space-between">
         <h1>장소 선택</h1>
@@ -371,17 +348,9 @@ const extractPlan = (attraction, day) => {
               </span>
             </template>
             <template #extra>
-              <div
-                style="
-                  display: flex;
-                  flex-direction: column;
-                  align-items: center;
-                "
-              >
+              <div style="display: flex; flex-direction: column; align-items: center">
                 <img width="182" alt="no Image" :src="item.image" />
-                <a-button
-                  style="width: 60px; margin-top: 5px"
-                  @click="openModal(item)"
+                <a-button style="width: 60px; margin-top: 5px" @click="openModal(item)"
                   >담기</a-button
                 >
               </div>
@@ -395,11 +364,10 @@ const extractPlan = (attraction, day) => {
       <!--a-list 끝-->
     </div>
 
-    <div style="margin-left: 10px; min-width: 350px">
+    <div style="margin-left: 5px; min-width: 350px">
       <h3 v-show="props.plan.endDate != ''">
-        {{ props.plan.startDate }} ~ {{ props.plan.endDate }} ({{
-          props.plan.dateDiff - 1
-        }}박 {{ props.plan.dateDiff }}일)
+        {{ props.plan.startDate }} ~ {{ props.plan.endDate }} ({{ props.plan.dateDiff - 1 }}박
+        {{ props.plan.dateDiff }}일)
       </h3>
       <div class="card-container">
         <a-tabs v-model:activeKey="activeKey" type="card">
@@ -410,23 +378,26 @@ const extractPlan = (attraction, day) => {
           >
             <p>{{ index + 1 }} 일차</p>
             <div v-for="planDay in props.plan.days">
-              <div v-show="planDay.day == index + 1">
+              <div v-show="planDay.day == index + 1" style="overflow-y: scroll; height: 700px">
                 <div
-                  v-for="(attraction, index2) in planDay.attractions"
+                  v-for="attraction in planDay.attractions"
                   :key="attraction.contentId"
-                  style="margin-top: 10px"
+                  style="margin-top: 10px; display: flex; justify-content: center"
                 >
-                  <div>{{ index2 + 1 }} 번</div>
-                  <div>{{ attraction.contentId }}</div>
-                  <div>{{ attraction.title }}</div>
-                  <div>{{ attraction.latitude }}</div>
-                  <div>{{ attraction.longitude }}</div>
-                  <a-button
-                    type="primary"
-                    danger
-                    @click="extractPlan(attraction, index + 1)"
-                    >빼기</a-button
-                  >
+                  <a-card hoverable style="width: 150px" size="small">
+                    <template #cover>
+                      <img alt="noImage" :src="attraction.image" />
+                    </template>
+                    <a-card-meta style="text-align: center" :title="attraction.title">
+                      <template #description>{{ attraction.addr1 }}</template>
+                    </a-card-meta>
+
+                    <template #actions>
+                      <a-button type="primary" danger @click="extractPlan(attraction, index + 1)"
+                        >빼기</a-button
+                      >
+                    </template>
+                  </a-card>
                 </div>
               </div>
             </div>
@@ -482,11 +453,7 @@ h1 {
 [data-theme="dark"] #components-tabs-demo-card-top .code-box-demo {
   background: #000;
 }
-[data-theme="dark"]
-  .card-container
-  > .ant-tabs-card
-  .ant-tabs-content
-  > .ant-tabs-tabpane {
+[data-theme="dark"] .card-container > .ant-tabs-card .ant-tabs-content > .ant-tabs-tabpane {
   background: #141414;
 }
 [data-theme="dark"] .card-container > .ant-tabs-card .ant-tabs-tab-active {

@@ -29,4 +29,9 @@ public class AttractionServiceImpl implements AttractionService {
     public AttractionInfo getDetailInfo(int contendId) throws SQLException {
         return attractionMapper.getDetailInfo(contendId);
     }
+
+    @Override
+    public List<AttractionInfo> getAllInfosFindById(List<Long> contentIdList) throws Exception {
+        return attractionMapper.getAllInfosFindById(contentIdList);
+    }
 }

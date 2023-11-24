@@ -8,13 +8,12 @@ import PlanDetails from "@/components/plan/PlanDetails.vue";
 import { storeToRefs } from "pinia";
 import { useMemberStore } from "@/stores/member";
 
-import {message} from 'ant-design-vue'
-const error = () =>{
-  message.error("로그인이 필요합니다")
-}
+import { message } from "ant-design-vue";
+const error = () => {
+  message.error("로그인이 필요합니다");
+};
 
 const onlyAuthUser = async (to, from, next) => {
-
   const memberStore = useMemberStore();
   const { userInfo, isValidToken } = storeToRefs(memberStore);
 
@@ -44,27 +43,12 @@ const router = createRouter({
       name: "plan",
       beforeEnter: onlyAuthUser,
       component: Planview,
-      // children: [
-      //   {
-      //     path: "/1",
-      //     name: "plan-menu-calendar",
-      //     component: PlanCalendar,
-      //   },
-      //   {
-      //     path: "/2",
-      //     name: "plan-menu-location",
-      //     component: PlanLocation,
-      //   },{
-      //     path: "/3",
-      //     name: "plan-menu-calendar",
-      //     component: PlanLodging,
-      //   },
-      // ]
     },
     {
       path: "/plan/:travelId",
       name: "plan-detail",
       component: PlanDetails,
+      props: true,
     },
     {
       path: "/information",
@@ -107,7 +91,8 @@ const router = createRouter({
           path: "myplan",
           name: "user-plan",
           beforeEnter: onlyAuthUser,
-          component: () => import("@/components/users/UserPlans.vue"),
+          component: () => import("@/components/plan/PlanDetails.vue"),
+          //component: () => import("@/components/users/UserPlans.vue"),
         },
         // {
         //   path: "modify/:userid",
